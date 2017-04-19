@@ -88,7 +88,7 @@ func (p *puzzle) generateTerminalPuzzle() []int {
 				nd_row_right_col_index := nd.Row.Right.Col.Index // [offset2 + 1, offset3]
 				index := nd_row_col_index - 1
 				digit := (nd_row_right_col_index - 1) % p.edge // [0, cells - 1]
-				ret[index] = digit + '1'
+				ret[index] = digit
 			}
 			ok = true
 			return true
