@@ -7,10 +7,11 @@ import (
 )
 
 func Test_GeneratePuzzle(t *testing.T) {
-	squares := 3
-	minSubGiven := 2
-	minTotalGiven := 17
+	squares := 4
+	minSubGiven := 10
+	minTotalGiven := 80
 	raw := GeneratePuzzle(squares, minSubGiven, minTotalGiven)
+	printPuzzleRaw(squares, raw)
 	p := newPuzzle(squares)
 	p.build(raw2digits(raw))
 	solutions := 2
@@ -24,5 +25,6 @@ func Test_GeneratePuzzle(t *testing.T) {
 func Test_generateTerminalPuzzle(t *testing.T) {
 	squares := 3
 	p := newPuzzle(squares)
-	printPuzzleDigits(squares, p.generateTerminalPuzzle())
+	tp := p.generateTerminalPuzzle()
+	printPuzzleDigits(squares, tp)
 }
