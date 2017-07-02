@@ -8,8 +8,6 @@ import (
 	"github.com/jiangyang5157/go-dlx/dlx"
 )
 
-var ErrInvalidDigits = errors.New("Invalid digits.")
-
 type puzzle struct {
 	dlx.X
 	squares int // > 0
@@ -48,7 +46,7 @@ func newPuzzle(squares int) *puzzle {
 
 func (p *puzzle) build(digits []int) error {
 	if digits == nil || len(digits) != p.cells {
-		return ErrInvalidDigits
+		return errors.New("Invalid digits.")
 	}
 
 	p.X = *dlx.NewX(p.offset4 + p.cells)
