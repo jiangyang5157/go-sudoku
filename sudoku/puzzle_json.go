@@ -1,30 +1,17 @@
 package sudoku
 
-import (
-	"encoding/json"
-	"errors"
-)
+import "encoding/json"
 
 type PuzzleJson struct {
-	Config   ConfigJson     `json:"ConfigJson"`
-	Terminal []TerminalJson `json:"TerminalJson"`
-}
-
-type ConfigJson struct {
-	Edge int `json:"Edge"`
-}
-
-type TerminalJson struct {
-	Row []RowJson `json:"RowJson"`
-}
-
-type RowJson struct {
-	Column []ColumnJson `json:"ColumnJson"`
-}
-
-type ColumnJson struct {
-	Digit int `json:"Digit"`
-	Block int `json:"Block"`
+	T []struct {
+		E int `json:"E"` // Edge length
+		C []struct {
+			I int `json:"I"` // Index i in the Terminal
+			J int `json:"J"` // Index j in the Terminal
+			B int `json:"B"` // Block that the Cell belongs to
+			D int `json:"D"` // Digit that the Cell hold
+		} `json:"C"` // Cell
+	} `json:"T"` // Terminal
 }
 
 func Raw2Puzzle(raw []byte) (*PuzzleJson, error) {
@@ -42,18 +29,4 @@ func Puzzle2Raw(puzzle *PuzzleJson) ([]byte, error) {
 		return nil, err
 	}
 	return ret, nil
-}
-
-func (p *PuzzleJson) Validate() error {
-	for _, t := range p.Terminal {
-		if len(t.Row) != p.Config.Edge {
-			return errors.New("Invalid row size.")
-		}
-		for _, r := range t.Row {
-			if len(r.Column) != p.Config.Edge {
-				return errors.New("Invalid column size.")
-			}
-		}
-	}
-	return nil
 }

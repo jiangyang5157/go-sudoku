@@ -6,69 +6,39 @@ import (
 )
 
 var jsonRaw = []byte(`
-  {
-    "ConfigJson" : {
-      "Edge":2
-    },
-    "TerminalJson": [
-      {
-        "RowJson":[
-          {
-            "ColumnJson":[
-              {
-                "Digit":1,
-                "Block":1
-              },
-							{
-                "Digit":2,
-                "Block":1
-              }
-            ]
-          },
-          {
-            "ColumnJson":[
-              {
-                "Digit":3,
-                "Block":1
-              },
-							{
-                "Digit":4,
-                "Block":1
-              }
-            ]
-          }
-        ]
-      },
-			{
-        "RowJson":[
-          {
-            "ColumnJson":[
-              {
-                "Digit":2,
-                "Block":1
-              },
-							{
-                "Digit":1,
-                "Block":1
-              }
-            ]
-          },
-          {
-            "ColumnJson":[
-              {
-                "Digit":4,
-                "Block":1
-              },
-							{
-                "Digit":3,
-                "Block":1
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
+{
+  "T": [
+    {
+      "E":2,
+      "C":[
+        {
+          "I":0,
+          "J":0,
+          "B":0,
+          "D":1
+        },
+        {
+          "I":0,
+          "J":1,
+          "B":0,
+          "D":2
+        },
+        {
+          "I":1,
+          "J":0,
+          "B":1,
+          "D":1
+        },
+        {
+          "I":1,
+          "J":1,
+          "B":1,
+          "D":0
+        }
+      ]
+    }
+  ]
+}
 `)
 
 func Test_Raw2Puzzle(t *testing.T) {
@@ -76,21 +46,8 @@ func Test_Raw2Puzzle(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = puzzle.Validate()
-	if err != nil {
-		t.Error(err)
-	}
-	if puzzle.Config.Edge != 2 {
-		t.Error("Config.Edge should be 2")
-	}
-	if len(puzzle.Terminal) != 2 {
-		t.Error("len(puzzleJson.Terminal) should be 2")
-	}
-	if len(puzzle.Terminal[1].Row) != 2 {
-		t.Error("len(puzzleJson.Terminal[1].Row) should be 2")
-	}
-	if len(puzzle.Terminal[1].Row[1].Column) != 2 {
-		t.Error("len(puzzleJson.Terminal[1].Row[1].Column) should be 1")
+	if puzzle.T[0].C[3].I != 1 || puzzle.T[0].C[3].J != 1 || puzzle.T[0].C[3].B != 1 || puzzle.T[0].C[3].D != 0 {
+		t.Error("Incorrect puzzle data")
 	}
 }
 
