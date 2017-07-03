@@ -1,7 +1,6 @@
 package sudoku
 
 import (
-	"encoding/json"
 	"reflect"
 	"testing"
 )
@@ -72,38 +71,34 @@ var jsonRaw = []byte(`
   }
 `)
 
-func Test_PuzzleJson_from_jsonData(t *testing.T) {
-	var puzzleJson PuzzleJson
-	err := json.Unmarshal(jsonRaw, &puzzleJson)
+func Test_Raw2Puzzle(t *testing.T) {
+	puzzle, err := Raw2Puzzle(jsonRaw)
 	if err != nil {
 		t.Error(err)
 	}
-	err = puzzleJson.validate()
+	err = puzzle.Validate()
 	if err != nil {
 		t.Error(err)
 	}
-	if puzzleJson.Config.Edge != 2 {
+	if puzzle.Config.Edge != 2 {
 		t.Error("Config.Edge should be 2")
 	}
-	if len(puzzleJson.Terminal) != 2 {
+	if len(puzzle.Terminal) != 2 {
 		t.Error("len(puzzleJson.Terminal) should be 2")
 	}
-	if len(puzzleJson.Terminal[1].Row) != 2 {
+	if len(puzzle.Terminal[1].Row) != 2 {
 		t.Error("len(puzzleJson.Terminal[1].Row) should be 2")
 	}
-	if len(puzzleJson.Terminal[1].Row[1].Column) != 2 {
+	if len(puzzle.Terminal[1].Row[1].Column) != 2 {
 		t.Error("len(puzzleJson.Terminal[1].Row[1].Column) should be 1")
 	}
 }
 
-func Test_PuzzleJson_to_jsonData(t *testing.T) {
-	var puzzleJson PuzzleJson
-	json.Unmarshal(jsonRaw, &puzzleJson)
-	jsonData2, _ := json.Marshal(puzzleJson)
-	var puzzleJson2 PuzzleJson
-	json.Unmarshal(jsonData2, &puzzleJson2)
-
-	if !reflect.DeepEqual(puzzleJson2, puzzleJson) {
-		t.Error("reflect.DeepEqual(puzzleJson2, puzzleJson) should be true")
+func Test_Puzzle2Raw(t *testing.T) {
+	puzzle, _ := Raw2Puzzle(jsonRaw)
+	raw2, _ := Puzzle2Raw(puzzle)
+	puzzle2, _ := Raw2Puzzle(raw2)
+	if !reflect.DeepEqual(puzzle2, puzzle) {
+		t.Error("reflect.DeepEqual(puzzle2, puzzle) should be true")
 	}
 }

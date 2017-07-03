@@ -1,6 +1,9 @@
 package sudoku
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+)
 
 type PuzzleJson struct {
 	Config   ConfigJson     `json:"ConfigJson"`
@@ -24,7 +27,24 @@ type ColumnJson struct {
 	Block int `json:"Block"`
 }
 
-func (p *PuzzleJson) validate() error {
+func Raw2Puzzle(raw []byte) (*PuzzleJson, error) {
+	var ret *PuzzleJson
+	err := json.Unmarshal(raw, &ret)
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
+}
+
+func Puzzle2Raw(puzzle *PuzzleJson) ([]byte, error) {
+	ret, err := json.Marshal(puzzle)
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
+}
+
+func (p *PuzzleJson) Validate() error {
 	for _, t := range p.Terminal {
 		if len(t.Row) != p.Config.Edge {
 			return errors.New("Invalid row size.")
