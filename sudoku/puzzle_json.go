@@ -3,8 +3,8 @@ package sudoku
 import "encoding/json"
 
 type PuzzleJson struct {
+	E int `json:"E"` // Edge length
 	T []struct {
-		E int `json:"E"` // Edge length
 		C []struct {
 			I int `json:"I"` // Index i in the Terminal
 			J int `json:"J"` // Index j in the Terminal
@@ -29,4 +29,13 @@ func Puzzle2Raw(puzzle *PuzzleJson) ([]byte, error) {
 		return nil, err
 	}
 	return ret, nil
+}
+
+func (p *PuzzleJson) Validate() bool {
+	for _, t := range p.T {
+		if len(t.C) != p.E*p.E {
+			return false
+		}
+	}
+	return true
 }

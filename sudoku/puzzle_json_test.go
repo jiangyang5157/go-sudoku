@@ -7,9 +7,9 @@ import (
 
 var jsonRaw = []byte(`
 {
+	"E":2,
   "T": [
     {
-      "E":2,
       "C":[
         {
           "I":0,
@@ -46,7 +46,7 @@ func Test_Raw2Puzzle(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if puzzle.T[0].C[3].I != 1 || puzzle.T[0].C[3].J != 1 || puzzle.T[0].C[3].B != 1 || puzzle.T[0].C[3].D != 0 {
+	if !puzzle.Validate() || puzzle.E != 2 || puzzle.T[0].C[3].I != 1 || puzzle.T[0].C[3].J != 1 || puzzle.T[0].C[3].B != 1 || puzzle.T[0].C[3].D != 0 {
 		t.Error("Incorrect puzzle data")
 	}
 }
