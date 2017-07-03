@@ -12,7 +12,7 @@ func Test_GeneratePuzzle(t *testing.T) {
 	minTotalGiven := 80
 	raw := GeneratePuzzle(squares, minSubGiven, minTotalGiven)
 	printPuzzleRaw(squares, raw)
-	p := newPuzzleData(squares)
+	p := newPuzzle(squares)
 	p.build(raw2digits(raw))
 	solutions := 2
 	sols := strings.Split(p.solve(solutions), string(SOLUTION_PREFIX))
@@ -24,7 +24,7 @@ func Test_GeneratePuzzle(t *testing.T) {
 
 func Test_generateTerminalPuzzle(t *testing.T) {
 	squares := 3
-	p := newPuzzleData(squares)
+	p := newPuzzle(squares)
 	tp := p.generateTerminalPuzzle()
 	printPuzzleDigits(squares, tp)
 }

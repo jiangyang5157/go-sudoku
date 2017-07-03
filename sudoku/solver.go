@@ -10,7 +10,7 @@ func SolveRaw(squares int, raw string, solutions int) string {
 }
 
 func SolveDigits(squares int, digits []int, solutions int) string {
-	p := newPuzzleData(squares)
+	p := newPuzzle(squares)
 	err := p.build(digits)
 	if err != nil {
 		return ""
@@ -18,7 +18,7 @@ func SolveDigits(squares int, digits []int, solutions int) string {
 	return p.solve(solutions)
 }
 
-func (p *puzzleData) solve(solutions int) string {
+func (p *puzzle) solve(solutions int) string {
 	var ret []byte
 	count := 0
 	p.Search(func(sol dlx.Solution) bool {
@@ -38,7 +38,7 @@ func (p *puzzleData) solve(solutions int) string {
 	return string(ret)
 }
 
-func (p *puzzleData) HasUniqueSolution() bool {
+func (p *puzzle) HasUniqueSolution() bool {
 	count := 0
 	p.Search(func(sol dlx.Solution) bool {
 		count++

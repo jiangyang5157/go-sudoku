@@ -8,7 +8,7 @@ import (
 	"github.com/jiangyang5157/go-dlx/dlx"
 )
 
-type puzzleData struct {
+type puzzle struct {
 	dlx.X
 
 	squares int // > 0
@@ -28,14 +28,14 @@ Constraints example: 9 x 9 puzzle (squares = 3)
 3. Each column must has [1, 9]: 9 * 9 = 81 constraints in column 163-243
 4. Each squares must has [1, 9]: 9 * 9 = 81 constraints in column 244-324
 */
-func newPuzzleData(squares int) *puzzleData {
+func newPuzzle(squares int) *puzzle {
 	edge := squares * squares
 	cells := edge * edge
 	offset1 := cells * 0
 	offset2 := cells * 1
 	offset3 := cells * 2
 	offset4 := cells * 3
-	return &puzzleData{
+	return &puzzle{
 		squares: squares,
 		edge:    edge,
 		cells:   cells,
@@ -47,7 +47,7 @@ func newPuzzleData(squares int) *puzzleData {
 	}
 }
 
-func (p *puzzleData) build(digits []int) error {
+func (p *puzzle) build(digits []int) error {
 	if digits == nil || len(digits) != p.cells {
 		return errors.New("Invalid digits.")
 	}
@@ -63,7 +63,7 @@ func (p *puzzleData) build(digits []int) error {
 	return nil
 }
 
-func (p *puzzleData) addDigit(digit int, index int, row int, col int, square int) {
+func (p *puzzle) addDigit(digit int, index int, row int, col int, square int) {
 	if digit >= 1 && digit <= p.edge {
 		// valid digit
 		p.AddRow([]int{
@@ -83,19 +83,19 @@ func (p *puzzleData) addDigit(digit int, index int, row int, col int, square int
 	}
 }
 
-func (p *puzzleData) squareIndex(row int, col int) int {
+func (p *puzzle) squareIndex(row int, col int) int {
 	return row/p.squares*p.squares + col/p.squares
 }
 
-func (p *puzzleData) cellIndex(row int, col int) int {
+func (p *puzzle) cellIndex(row int, col int) int {
 	return row*p.edge + col
 }
 
-func (p *puzzleData) rowIndex(cell int) int {
+func (p *puzzle) rowIndex(cell int) int {
 	return cell / p.edge
 }
 
-func (p *puzzleData) colIndex(cell int) int {
+func (p *puzzle) colIndex(cell int) int {
 	return cell % p.edge
 }
 

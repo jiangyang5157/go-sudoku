@@ -4,7 +4,7 @@ import "github.com/jiangyang5157/go-dlx/dlx"
 
 // Generate unique solution puzzle.
 func GeneratePuzzle(squares int, minSubGiven int, minTotalGiven int) string {
-	p := newPuzzleData(squares)
+	p := newPuzzle(squares)
 
 	remainTotalGiven := p.cells
 	remainRowGiven := make([]int, p.edge)
@@ -55,7 +55,7 @@ func GeneratePuzzle(squares int, minSubGiven int, minTotalGiven int) string {
 	return digits2raw(terminalPuzzle)
 }
 
-func (p *puzzleData) generateTerminalPuzzle() []int {
+func (p *puzzle) generateTerminalPuzzle() []int {
 	ret := make([]int, p.cells)
 	digits := make([]int, p.cells)
 

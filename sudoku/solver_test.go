@@ -100,7 +100,7 @@ func Test_solve(t *testing.T) {
 			"978531642" // 2 solutions puzzle
 
 	squares := 3
-	p := newPuzzleData(squares)
+	p := newPuzzle(squares)
 	p.build(raw2digits(raw))
 	solutions := 2
 	sols := strings.Split(p.solve(solutions), string(SOLUTION_PREFIX))
@@ -130,7 +130,7 @@ func Test_solve(t *testing.T) {
 }
 
 func Test_HasUniqueSolution(t *testing.T) {
-	p := newPuzzleData(3)
+	p := newPuzzle(3)
 
 	raw :=
 		"..3456789" +
