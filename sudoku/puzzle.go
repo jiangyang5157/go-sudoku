@@ -31,6 +31,7 @@ Constraints example: 9 x 9 puzzle (squares = 3)
 func newPuzzle(squares int) *puzzle {
 	edge := squares * squares
 	cells := edge * edge
+
 	offset1 := cells * 0
 	offset2 := cells * 1
 	offset3 := cells * 2
