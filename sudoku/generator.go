@@ -55,7 +55,7 @@ func GeneratePuzzle(squares int, minSubGiven int, minTotalGiven int) string {
 	return digits2raw(terminalPuzzle)
 }
 
-func (p *puzzle) generateTerminalPuzzle() []int {
+func (p *puzzleData) generateTerminalPuzzle() []int {
 	ret := make([]int, p.cells)
 	digits := make([]int, p.cells)
 

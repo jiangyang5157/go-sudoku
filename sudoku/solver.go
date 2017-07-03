@@ -18,7 +18,7 @@ func SolveDigits(squares int, digits []int, solutions int) string {
 	return p.solve(solutions)
 }
 
-func (p *puzzle) solve(solutions int) string {
+func (p *puzzleData) solve(solutions int) string {
 	var ret []byte
 	count := 0
 	p.Search(func(sol dlx.Solution) bool {
@@ -38,7 +38,7 @@ func (p *puzzle) solve(solutions int) string {
 	return string(ret)
 }
 
-func (p *puzzle) HasUniqueSolution() bool {
+func (p *puzzleData) HasUniqueSolution() bool {
 	count := 0
 	p.Search(func(sol dlx.Solution) bool {
 		count++
