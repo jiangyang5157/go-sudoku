@@ -19,24 +19,8 @@ var jsonRaw = []byte(`
               {
                 "Digit":1,
                 "Block":1
-              }
-            ]
-          },
-          {
-            "ColumnJson":[
-              {
-                "Digit":2,
-                "Block":2
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "RowJson":[
-          {
-            "ColumnJson":[
-              {
+              },
+							{
                 "Digit":2,
                 "Block":1
               }
@@ -45,8 +29,40 @@ var jsonRaw = []byte(`
           {
             "ColumnJson":[
               {
+                "Digit":3,
+                "Block":1
+              },
+							{
+                "Digit":4,
+                "Block":1
+              }
+            ]
+          }
+        ]
+      },
+			{
+        "RowJson":[
+          {
+            "ColumnJson":[
+              {
+                "Digit":2,
+                "Block":1
+              },
+							{
                 "Digit":1,
-                "Block":2
+                "Block":1
+              }
+            ]
+          },
+          {
+            "ColumnJson":[
+              {
+                "Digit":4,
+                "Block":1
+              },
+							{
+                "Digit":3,
+                "Block":1
               }
             ]
           }
@@ -60,7 +76,11 @@ func Test_PuzzleJson_from_jsonData(t *testing.T) {
 	var puzzleJson PuzzleJson
 	err := json.Unmarshal(jsonRaw, &puzzleJson)
 	if err != nil {
-		t.Error("Invalid json data:\n%v", jsonRaw)
+		t.Error(err)
+	}
+	err = puzzleJson.validate()
+	if err != nil {
+		t.Error(err)
 	}
 	if puzzleJson.Config.Edge != 2 {
 		t.Error("Config.Edge should be 2")
@@ -71,14 +91,8 @@ func Test_PuzzleJson_from_jsonData(t *testing.T) {
 	if len(puzzleJson.Terminal[1].Row) != 2 {
 		t.Error("len(puzzleJson.Terminal[1].Row) should be 2")
 	}
-	if len(puzzleJson.Terminal[1].Row[1].Column) != 1 {
+	if len(puzzleJson.Terminal[1].Row[1].Column) != 2 {
 		t.Error("len(puzzleJson.Terminal[1].Row[1].Column) should be 1")
-	}
-	if puzzleJson.Terminal[1].Row[1].Column[0].Digit != 1 {
-		t.Error("Terminal[1].Row[1].Column[0].Digit should be 1")
-	}
-	if puzzleJson.Terminal[1].Row[1].Column[0].Block != 2 {
-		t.Error("Terminal[1].Row[1].Column[0].Digit should be 2")
 	}
 }
 
