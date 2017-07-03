@@ -28,7 +28,7 @@ Constraints example: 9 x 9 puzzle (squares = 3)
 3. Each column must has [1, 9]: 9 * 9 = 81 constraints in column 163-243
 4. Each squares must has [1, 9]: 9 * 9 = 81 constraints in column 244-324
 */
-func newPuzzle(squares int) *puzzleData {
+func newPuzzleData(squares int) *puzzleData {
 	edge := squares * squares
 	cells := edge * edge
 	offset1 := cells * 0

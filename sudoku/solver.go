@@ -10,7 +10,7 @@ func SolveRaw(squares int, raw string, solutions int) string {
 }
 
 func SolveDigits(squares int, digits []int, solutions int) string {
-	p := newPuzzle(squares)
+	p := newPuzzleData(squares)
 	err := p.build(digits)
 	if err != nil {
 		return ""
