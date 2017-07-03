@@ -1,3 +1,4 @@
+// @deprecated by sudoku.go
 package sudoku
 
 import (
