@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-var jsonData = []byte(`
+var jsonRaw = []byte(`
   {
     "ConfigJson" : {
       "Edge":2
@@ -58,9 +58,9 @@ var jsonData = []byte(`
 
 func Test_PuzzleJson_from_jsonData(t *testing.T) {
 	var puzzleJson PuzzleJson
-	err := json.Unmarshal(jsonData, &puzzleJson)
+	err := json.Unmarshal(jsonRaw, &puzzleJson)
 	if err != nil {
-		t.Error("Invalid json data:\n%v", jsonData)
+		t.Error("Invalid json data:\n%v", jsonRaw)
 	}
 	if puzzleJson.Config.Edge != 2 {
 		t.Error("Config.Edge should be 2")
@@ -84,7 +84,7 @@ func Test_PuzzleJson_from_jsonData(t *testing.T) {
 
 func Test_PuzzleJson_to_jsonData(t *testing.T) {
 	var puzzleJson PuzzleJson
-	json.Unmarshal(jsonData, &puzzleJson)
+	json.Unmarshal(jsonRaw, &puzzleJson)
 	jsonData2, _ := json.Marshal(puzzleJson)
 	var puzzleJson2 PuzzleJson
 	json.Unmarshal(jsonData2, &puzzleJson2)
