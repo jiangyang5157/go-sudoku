@@ -8,11 +8,32 @@ import (
 	"github.com/jiangyang5157/go-dlx/dlx"
 )
 
+/*
+eg:
+{
+    "aaaa": {
+        "zzzz": {
+            "a": 10,
+            "b": 5,
+            "c": 15
+        },
+        "xxxx": {
+            "a": 10,
+            "b": 6
+        }
+    },
+	  "bbbb": {
+		}
+}
+
+*/
 type puzzle struct {
 	dlx.X
+
 	squares int // > 0
 	edge    int // squares * squares
 	cells   int // edge * edge
+
 	offset1 int // 0
 	offset2 int // offset1 + cells
 	offset3 int // offset2 + cells
@@ -37,6 +58,7 @@ func newPuzzle(squares int) *puzzle {
 		squares: squares,
 		edge:    edge,
 		cells:   cells,
+
 		offset1: offset1,
 		offset2: offset2,
 		offset3: offset3,
