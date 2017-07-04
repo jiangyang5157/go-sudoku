@@ -5,12 +5,16 @@ import (
 	"testing"
 )
 
-func Test_GenByte_NORMAL(t *testing.T) {
-	fmt.Printf("Test_GenByte_NORMAL:\n%v\n", genTerminal(9, NORMAL, 7, 77))
+func Test_genMaterial(t *testing.T) {
+	fmt.Printf("Test_genMaterial:\n%v\n", newTerminal(9).genMaterial())
 }
 
-func Test_GenByte_RAMDON(t *testing.T) {
-	fmt.Printf("Test_GenByte_RAMDON:\n%v\n", genTerminal(9, RANDOM, 4, 44))
+func Test_genBlock_REGULAR(t *testing.T) {
+	fmt.Printf("Test_genBlock_REGULAR:\n%v\n", newTerminal(9).genBlock(REGULAR))
+}
+
+func Test_genBlock_IRREGULAR(t *testing.T) {
+	fmt.Printf("Test_genBlock_IRREGULAR:\n%v\n", newTerminal(9).genBlock(IRREGULAR))
 }
 
 func Test_digitsDisorder(t *testing.T) {

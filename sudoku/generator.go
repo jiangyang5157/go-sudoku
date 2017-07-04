@@ -1,45 +1,61 @@
 package sudoku
 
 import (
+	"fmt"
+	"math"
 	"math/rand"
 	"time"
 )
 
-type Gen_Mode int
+type GenMode int
 
 const (
-	NORMAL Gen_Mode = iota // 0
-	RANDOM                 // 1
+	REGULAR   GenMode = iota // 0
+	IRREGULAR                // 1
 )
 
-func GenString(edge int, mode Gen_Mode, minSubGiven int, minTotalGiven int) string {
+func GenString(edge int, mode GenMode, minSubGiven int, minTotalGiven int) string {
 	return string(GenByte(edge, mode, minSubGiven, minTotalGiven))
 }
 
-func GenByte(edge int, mode Gen_Mode, minSubGiven int, minTotalGiven int) []byte {
+func GenByte(edge int, mode GenMode, minSubGiven int, minTotalGiven int) []byte {
 	t := genTerminal(edge, mode, minSubGiven, minTotalGiven)
 	ret, _ := Terminal2Raw(t)
 	return ret
 }
 
-func genTerminal(edge int, mode Gen_Mode, minSubGiven int, minTotalGiven int) *Terminal {
-	t := genMaterial(edge).genBlock(mode)
+func genTerminal(edge int, mode GenMode, minSubGiven int, minTotalGiven int) *Terminal {
+	t := newTerminal(edge).genBlock(mode).genMaterial()
 	t = solve(t)
-	if t == nil {
-		return nil
-	}
 	t = t.genPuzzle(minSubGiven, minTotalGiven)
 	return t
 }
 
-func genMaterial(edge int) *Terminal {
-	t := newTerminal(edge)
-	// TODO
+func (t *Terminal) genBlock(mode GenMode) *Terminal {
+	switch mode {
+	// TODO case IRREGULAR
+	default: // REGULAR
+		//TODO
+	}
 	return t
 }
 
-func (t *Terminal) genBlock(mode Gen_Mode) *Terminal {
-	// TODO
+// Fill diagonal square by random digits, returns the Terminal which should have solution
+func (t *Terminal) genMaterial() *Terminal {
+	tmp := make([]int, t.E)
+	for i := range tmp {
+		tmp[i] = i + 1 // [1, t.E]
+	}
+	square := int(math.Sqrt(float64(t.E)))
+	fmt.Printf("square:%v\n", square)
+	for i := 0; i < t.E; i += square + 1 {
+		digits := digitsDisorder(tmp)
+		for j := 0; j < t.E; j++ {
+			row := j/square + (i/square)*square
+			col := j%square + (i/square)*square
+			t.Cell(row, col).D = digits[j]
+		}
+	}
 	return t
 }
 
@@ -57,49 +73,6 @@ func digitsDisorder(digits []int) []int {
 	return digits
 }
 
-// func (p *puzzle) generateTerminalPuzzle() []int {
-// 	ret := make([]int, p.cells)
-// 	digits := make([]int, p.cells)
-//
-// 	tmp := make([]int, p.edge)
-// 	for i := range tmp {
-// 		tmp[i] = i + 1 // 1,2,...,p.edge
-// 	}
-//
-// 	// rare zero solution happens, particularly for 2x2 puzzle
-// 	ok := false
-// 	for {
-// 		if ok {
-// 			break
-// 		}
-//
-// 		// fill diagonal squares by random digits
-// 		for i := 0; i < p.edge; i += p.squares + 1 {
-// 			randomDigits := digitsDisorder(tmp)
-// 			for j := 0; j < p.edge; j++ {
-// 				row := j/p.squares + (i/p.squares)*p.squares
-// 				col := j%p.squares + (i/p.squares)*p.squares
-// 				digits[p.cellIndex(row, col)] = randomDigits[j]
-// 			}
-// 		}
-//
-// 		p.build(digits)
-// 		p.Search(func(sol dlx.Solution) bool {
-// 			for _, nd := range sol {
-// 				nd_row_col_index := nd.Row.Col.Index             // [offset1 + 1, offset2]
-// 				nd_row_right_col_index := nd.Row.Right.Col.Index // [offset2 + 1, offset3]
-// 				index := nd_row_col_index - 1
-// 				digit := (nd_row_right_col_index - 1) % p.edge // [0, cells - 1]
-// 				ret[index] = digit + 1
-// 			}
-// 			ok = true
-// 			return true
-// 		})
-// 	}
-//
-// 	return ret
-// }
-//
 // // Generate unique solution puzzle.
 // func GeneratePuzzle(squares int, minSubGiven int, minTotalGiven int) string {
 // 	p := newPuzzle(squares)
