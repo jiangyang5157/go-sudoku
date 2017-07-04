@@ -30,7 +30,8 @@ func newTerminal(edge int) *Terminal {
 	ret := &Terminal{E: edge}
 	cells := edge * edge
 	ret.C = make([]Cell, cells)
-	for i, index := 0, 0; i < edge; i++ {
+	index := 0
+	for i := 0; i < edge; i++ {
 		for j := 0; j < edge; j++ {
 			ret.C[index].I = i
 			ret.C[index].J = j
