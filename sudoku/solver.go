@@ -5,14 +5,17 @@ func SolveString(raw string) string {
 }
 
 func SolveByte(raw []byte) []byte {
-	rawT, _ := Raw2Terminal(raw)
-	s := newSudoku(rawT)
-	s.initialize()
-	var retT *Terminal
-	s.solve(func(t *Terminal) bool {
-		retT = t
+	t, _ := Raw2Terminal(raw)
+	sol := solve(t)
+	ret, _ := Terminal2Raw(sol)
+	return ret
+}
+
+func solve(t *Terminal) *Terminal {
+	var ret *Terminal
+	newSudoku(t).initialize().solve(func(sol *Terminal) bool {
+		ret = sol
 		return true
 	})
-	retJson, _ := Terminal2Raw(retT)
-	return retJson
+	return ret
 }

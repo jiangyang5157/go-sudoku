@@ -6,11 +6,11 @@ import (
 )
 
 func Test_GenByte_NORMAL(t *testing.T) {
-	fmt.Println(genTerminal(9, NORMAL))
+	fmt.Printf("Test_GenByte_NORMAL:\n%v\n", genTerminal(9, NORMAL, 7, 77))
 }
 
 func Test_GenByte_RAMDON(t *testing.T) {
-	// TODO
+	fmt.Printf("Test_GenByte_RAMDON:\n%v\n", genTerminal(9, RANDOM, 4, 44))
 }
 
 func Test_digitsDisorder(t *testing.T) {
@@ -19,28 +19,5 @@ func Test_digitsDisorder(t *testing.T) {
 		digits[i] = i
 	}
 	digitsDisorder(digits)
-	fmt.Printf("After digitsDisorder: %d \n", digits)
+	fmt.Printf("Test_digitsDisorder:\n%d\n", digits)
 }
-
-// func Test_GeneratePuzzle(t *testing.T) {
-// 	squares := 4
-// 	minSubGiven := 10
-// 	minTotalGiven := 80
-// 	raw := GeneratePuzzle(squares, minSubGiven, minTotalGiven)
-// 	printPuzzleRaw(squares, raw)
-// 	p := newPuzzle(squares)
-// 	p.build(raw2digits(raw))
-// 	solutions := 2
-// 	sols := strings.Split(p.solve(solutions), string(SOLUTION_PREFIX))
-// 	fmt.Printf("Searching for %d solutions, %d solutions found.\n", solutions, len(sols)-1)
-// 	for i := 1; i < len(sols); i++ {
-// 		printPuzzleRaw(squares, sols[i])
-// 	}
-// }
-//
-// func Test_generateTerminalPuzzle(t *testing.T) {
-// 	squares := 3
-// 	p := newPuzzle(squares)
-// 	tp := p.generateTerminalPuzzle()
-// 	printPuzzleDigits(squares, tp)
-// }

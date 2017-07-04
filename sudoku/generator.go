@@ -12,44 +12,40 @@ const (
 	RANDOM                 // 1
 )
 
-func GenString(edge int, mode Gen_Mode) string {
-	return string(GenByte(edge, mode))
+func GenString(edge int, mode Gen_Mode, minSubGiven int, minTotalGiven int) string {
+	return string(GenByte(edge, mode, minSubGiven, minTotalGiven))
 }
 
-func GenByte(edge int, mode Gen_Mode) []byte {
-	t := genTerminal(edge, mode)
+func GenByte(edge int, mode Gen_Mode, minSubGiven int, minTotalGiven int) []byte {
+	t := genTerminal(edge, mode, minSubGiven, minTotalGiven)
 	ret, _ := Terminal2Raw(t)
 	return ret
 }
 
-func genTerminal(edge int, mode Gen_Mode) *Terminal {
-	t := genMaterial(edge)
-	fillBlock(t, mode)
-	fillDigits(t)
-	digDigits(t)
+func genTerminal(edge int, mode Gen_Mode, minSubGiven int, minTotalGiven int) *Terminal {
+	t := genMaterial(edge).genBlock(mode)
+	t = solve(t)
+	if t == nil {
+		return nil
+	}
+	t = t.genPuzzle(minSubGiven, minTotalGiven)
 	return t
 }
 
 func genMaterial(edge int) *Terminal {
-	ret := newTerminal(edge)
-	return ret
-}
-
-func fillBlock(t *Terminal, mode Gen_Mode) {
-	switch mode {
-	case RANDOM:
-		// TODO
-	default:
-		// TODO
-	}
-}
-
-func fillDigits(t *Terminal) {
+	t := newTerminal(edge)
 	// TODO
+	return t
 }
 
-func digDigits(t *Terminal) {
+func (t *Terminal) genBlock(mode Gen_Mode) *Terminal {
 	// TODO
+	return t
+}
+
+func (t *Terminal) genPuzzle(minSubGiven int, minTotalGiven int) *Terminal {
+	// TODO
+	return t
 }
 
 func digitsDisorder(digits []int) []int {

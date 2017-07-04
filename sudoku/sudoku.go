@@ -18,7 +18,7 @@ Constraints example: 9 x 9 puzzle
 3. Each column must has [1, 9]: 9 * 9 = 81 constraints in column 163-243
 4. Each block must has [1, 9]: 9 * 9 = 81 constraints in column 244-324
 */
-func (s *sudoku) initialize() {
+func (s *sudoku) initialize() *sudoku {
 	cells := s.t.E * s.t.E
 	cellConstraintOffset := 0
 	rowConstraintOffset := cellConstraintOffset + cells
@@ -48,6 +48,7 @@ func (s *sudoku) initialize() {
 			}
 		}
 	}
+	return s
 }
 
 func (s *sudoku) solve(f func(*Terminal) bool) {
