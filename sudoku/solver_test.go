@@ -6,6 +6,14 @@ import (
 	"testing"
 )
 
+func Test_Solve_rawJson(t *testing.T) {
+	terminal := Solve(terminalJson)
+	fmt.Printf("Test_Solve_rawJson: %v.\n", string(terminal))
+}
+
+// =============================================================================
+// @deprecated everything below
+// =============================================================================
 func Test_SolvePuzzleByRaw(t *testing.T) {
 	raw :=
 		// "......123" +

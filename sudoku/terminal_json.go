@@ -36,3 +36,9 @@ func Terminal2Raw(t *Terminal) ([]byte, error) {
 	}
 	return ret, nil
 }
+
+func (t *Terminal) Clone() *Terminal {
+	raw, _ := Terminal2Raw(t)
+	ret, _ := Raw2Terminal(raw)
+	return ret
+}

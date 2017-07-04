@@ -2,6 +2,29 @@ package sudoku
 
 import "github.com/jiangyang5157/go-dlx/dlx"
 
+func Solve(rawJson []byte) []byte {
+	rawT, err := Raw2Terminal(rawJson)
+	if err != nil {
+		return nil
+	}
+	s := newSudoku(rawT)
+	s.initialize()
+	retT := s.solve()
+	retJson, err := Terminal2Raw(retT)
+	if err != nil {
+		return nil
+	}
+	return retJson
+}
+
+func (s *sudoku) solve() *Terminal {
+	ret := s.t.Clone()
+	return ret
+}
+
+// =============================================================================
+// @deprecated everything below
+// =============================================================================
 // prefix < '0' && prefix != whatever representing unknown digit in the raw
 const SOLUTION_PREFIX byte = '#'
 

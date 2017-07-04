@@ -55,3 +55,12 @@ func Test_Terminal2Raw(t *testing.T) {
 		t.Error("reflect.DeepEqual(terminal2, terminal) should be true")
 	}
 }
+
+func Test_Clone(t *testing.T) {
+	rawT, _ := Raw2Terminal(terminalJson)
+	copyT := rawT.Clone()
+	copyT.E = 9
+	if rawT.E != 2 || copyT.E != 9 {
+		t.Error("Clone failed")
+	}
+}
