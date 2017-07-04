@@ -5,6 +5,14 @@ import (
 	"testing"
 )
 
+func Test_GenByte_NORMAL(t *testing.T) {
+	fmt.Println(genTerminal(9, NORMAL))
+}
+
+func Test_GenByte_RAMDON(t *testing.T) {
+	// TODO
+}
+
 func Test_digitsDisorder(t *testing.T) {
 	var digits []int = make([]int, 9)
 	for i := range digits {

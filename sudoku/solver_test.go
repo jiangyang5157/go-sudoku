@@ -2,7 +2,7 @@ package sudoku
 
 import "testing"
 
-func Test_Solve_rawJson(t *testing.T) {
+func Test_SolveByte(t *testing.T) {
 	terminal := SolveByte(terminalJson_9x9_0)
 	if string(terminal) != "null" {
 		t.Error("terminalJson_9x9_0 shouldn't have solution")

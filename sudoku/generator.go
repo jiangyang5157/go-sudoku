@@ -5,6 +5,62 @@ import (
 	"time"
 )
 
+type Gen_Mode int
+
+const (
+	NORMAL Gen_Mode = iota // 0
+	RANDOM                 // 1
+)
+
+func GenString(edge int, mode Gen_Mode) string {
+	return string(GenByte(edge, mode))
+}
+
+func GenByte(edge int, mode Gen_Mode) []byte {
+	t := genTerminal(edge, mode)
+	ret, _ := Terminal2Raw(t)
+	return ret
+}
+
+func genTerminal(edge int, mode Gen_Mode) *Terminal {
+	t := genMaterial(edge)
+	fillBlock(t, mode)
+	fillDigits(t)
+	digDigits(t)
+	return t
+}
+
+func genMaterial(edge int) *Terminal {
+	ret := newTerminal(edge)
+	return ret
+}
+
+func fillBlock(t *Terminal, mode Gen_Mode) {
+	switch mode {
+	case RANDOM:
+		// TODO
+	default:
+		// TODO
+	}
+}
+
+func fillDigits(t *Terminal) {
+	// TODO
+}
+
+func digDigits(t *Terminal) {
+	// TODO
+}
+
+func digitsDisorder(digits []int) []int {
+	rand.Seed(time.Now().Unix())
+	for i := 0; i < len(digits); i++ {
+		random := rand.Intn(len(digits))
+		digits[i], digits[random] = digits[random], digits[i]
+	}
+	return digits
+}
+
 // func (p *puzzle) generateTerminalPuzzle() []int {
 // 	ret := make([]int, p.cells)
 // 	digits := make([]int, p.cells)
@@ -47,16 +103,7 @@ import (
 //
 // 	return ret
 // }
-
-func digitsDisorder(digits []int) []int {
-	rand.Seed(time.Now().Unix())
-	for i := 0; i < len(digits); i++ {
-		random := rand.Intn(len(digits))
-		digits[i], digits[random] = digits[random], digits[i]
-	}
-	return digits
-}
-
+//
 // // Generate unique solution puzzle.
 // func GeneratePuzzle(squares int, minSubGiven int, minTotalGiven int) string {
 // 	p := newPuzzle(squares)
