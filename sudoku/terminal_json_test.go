@@ -66,7 +66,7 @@ func Test_Clone(t *testing.T) {
 	}
 }
 
-func Test_String(t *testing.T) {
-	terminal, _ := Raw2Terminal(terminalJson_9x9_2)
+func Test_newTerminal(t *testing.T) {
+	terminal := newTerminal(9)
 	fmt.Println(terminal)
 }

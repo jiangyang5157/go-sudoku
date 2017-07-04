@@ -5,6 +5,49 @@ import (
 	"time"
 )
 
+// func (p *puzzle) generateTerminalPuzzle() []int {
+// 	ret := make([]int, p.cells)
+// 	digits := make([]int, p.cells)
+//
+// 	tmp := make([]int, p.edge)
+// 	for i := range tmp {
+// 		tmp[i] = i + 1 // 1,2,...,p.edge
+// 	}
+//
+// 	// rare zero solution happens, particularly for 2x2 puzzle
+// 	ok := false
+// 	for {
+// 		if ok {
+// 			break
+// 		}
+//
+// 		// fill diagonal squares by random digits
+// 		for i := 0; i < p.edge; i += p.squares + 1 {
+// 			randomDigits := digitsDisorder(tmp)
+// 			for j := 0; j < p.edge; j++ {
+// 				row := j/p.squares + (i/p.squares)*p.squares
+// 				col := j%p.squares + (i/p.squares)*p.squares
+// 				digits[p.cellIndex(row, col)] = randomDigits[j]
+// 			}
+// 		}
+//
+// 		p.build(digits)
+// 		p.Search(func(sol dlx.Solution) bool {
+// 			for _, nd := range sol {
+// 				nd_row_col_index := nd.Row.Col.Index             // [offset1 + 1, offset2]
+// 				nd_row_right_col_index := nd.Row.Right.Col.Index // [offset2 + 1, offset3]
+// 				index := nd_row_col_index - 1
+// 				digit := (nd_row_right_col_index - 1) % p.edge // [0, cells - 1]
+// 				ret[index] = digit + 1
+// 			}
+// 			ok = true
+// 			return true
+// 		})
+// 	}
+//
+// 	return ret
+// }
+
 func digitsDisorder(digits []int) []int {
 	rand.Seed(time.Now().Unix())
 	for i := 0; i < len(digits); i++ {
@@ -65,47 +108,4 @@ func digitsDisorder(digits []int) []int {
 // 	}
 //
 // 	return digits2raw(terminalPuzzle)
-// }
-//
-// func (p *puzzle) generateTerminalPuzzle() []int {
-// 	ret := make([]int, p.cells)
-// 	digits := make([]int, p.cells)
-//
-// 	tmp := make([]int, p.edge)
-// 	for i := range tmp {
-// 		tmp[i] = i + 1 // 1,2,...,p.edge
-// 	}
-//
-// 	// rare zero solution happens, particularly for 2x2 puzzle
-// 	ok := false
-// 	for {
-// 		if ok {
-// 			break
-// 		}
-//
-// 		// fill diagonal squares by random digits
-// 		for i := 0; i < p.edge; i += p.squares + 1 {
-// 			randomDigits := digitsDisorder(tmp)
-// 			for j := 0; j < p.edge; j++ {
-// 				row := j/p.squares + (i/p.squares)*p.squares
-// 				col := j%p.squares + (i/p.squares)*p.squares
-// 				digits[p.cellIndex(row, col)] = randomDigits[j]
-// 			}
-// 		}
-//
-// 		p.build(digits)
-// 		p.Search(func(sol dlx.Solution) bool {
-// 			for _, nd := range sol {
-// 				nd_row_col_index := nd.Row.Col.Index             // [offset1 + 1, offset2]
-// 				nd_row_right_col_index := nd.Row.Right.Col.Index // [offset2 + 1, offset3]
-// 				index := nd_row_col_index - 1
-// 				digit := (nd_row_right_col_index - 1) % p.edge // [0, cells - 1]
-// 				ret[index] = digit + 1
-// 			}
-// 			ok = true
-// 			return true
-// 		})
-// 	}
-//
-// 	return ret
 // }

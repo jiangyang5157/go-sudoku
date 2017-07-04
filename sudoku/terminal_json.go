@@ -26,6 +26,20 @@ type Cell struct {
 	D int `json:"D"`
 }
 
+func newTerminal(edge int) *Terminal {
+	ret := &Terminal{E: edge}
+	cells := edge * edge
+	ret.C = make([]Cell, cells)
+	for i, index := 0, 0; i < edge; i++ {
+		for j := 0; j < edge; j++ {
+			ret.C[index].I = i
+			ret.C[index].J = j
+			index++
+		}
+	}
+	return ret
+}
+
 func Raw2Terminal(raw []byte) (*Terminal, error) {
 	var ret *Terminal
 	err := json.Unmarshal(raw, &ret)
@@ -54,12 +68,12 @@ func (t *Terminal) Cell(i int, j int) *Cell {
 }
 
 func (t *Terminal) String() string {
-	var ret string
 	const ASCII_0 = '0'
+	ret := fmt.Sprintf("Terminal: E=%c, []{D(I,J,B)}=\n", t.E+ASCII_0)
 	for i := 0; i < t.E; i++ {
 		for j := 0; j < t.E; j++ {
 			c := t.Cell(i, j)
-			ret += fmt.Sprintf("%c(%c),", c.D+ASCII_0, c.B+ASCII_0)
+			ret += fmt.Sprintf("%c(%c,%c,%c),", c.D+ASCII_0, c.I+ASCII_0, c.J+ASCII_0, c.B+ASCII_0)
 		}
 		ret += "\n"
 	}
