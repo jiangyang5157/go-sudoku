@@ -65,7 +65,11 @@ func (t *Terminal) Clone() *Terminal {
 }
 
 func (t *Terminal) Cell(i int, j int) *Cell {
-	return &t.C[i*t.E+j]
+	return &t.C[t.Index(i, j)]
+}
+
+func (t *Terminal) Index(i int, j int) int {
+	return i*t.E + j
 }
 
 func (t *Terminal) String() string {

@@ -1,6 +1,7 @@
 package sudoku
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -9,8 +10,17 @@ import (
 type GenMode int
 
 const (
-	REGULAR   GenMode = iota // 0
-	IRREGULAR                // 1
+	REGULAR GenMode = iota
+	IRREGULAR
+)
+
+type DIRECTION int
+
+const (
+	TOP DIRECTION = iota
+	BOTTOM
+	LEFT
+	RIGHT
 )
 
 func GenString(edge int, mode GenMode, minSubGiven int, minTotalGiven int) string {
@@ -24,7 +34,12 @@ func GenByte(edge int, mode GenMode, minSubGiven int, minTotalGiven int) []byte 
 }
 
 func genTerminal(edge int, mode GenMode, minSubGiven int, minTotalGiven int) *Terminal {
-	t := newTerminal(edge).genBlock(mode).genMaterial()
+	rand.Seed(time.Now().Unix())
+	t := newTerminal(edge).genBlock(mode)
+	if t == nil {
+		return nil
+	}
+	t = t.genMaterial()
 	t = solve(t)
 	t = t.genPuzzle(minSubGiven, minTotalGiven)
 	return t
@@ -32,15 +47,91 @@ func genTerminal(edge int, mode GenMode, minSubGiven int, minTotalGiven int) *Te
 
 func (t *Terminal) genBlock(mode GenMode) *Terminal {
 	switch mode {
-	// TODO case IRREGULAR
-
-	default: // REGULAR
+	case REGULAR:
 		square := int(math.Sqrt(float64(t.E)))
 		for i := 0; i < len(t.C); i++ {
 			c := &t.C[i]
 			c.B = (c.I/square)*square + c.J/square
 		}
+		return t
+	case IRREGULAR:
+		b := t.E - 1
+		for i := 0; i < len(t.C); i++ {
+			if b <= 0 {
+				break
+			}
+			c := &t.C[i]
+			if c.B == 0 {
+				t = t.genCellBlockTop2BottomAndLeft2Right(i, b)
+				b--
+			}
+		}
+		return t
+	default:
+		return nil
 	}
+}
+
+func (t *Terminal) genCellBlockTop2BottomAndLeft2Right(index int, block int) *Terminal {
+	var c *Cell
+	var trace []int
+	count := 0
+
+	c = &t.C[index]
+	c.B = block
+	trace = append(trace, index)
+	count++
+
+	for count < t.E {
+		c = &t.C[trace[len(trace)-1]]
+		dirs := []DIRECTION{}
+		if c.I-1 >= 0 && t.Cell(c.I-1, c.J).B == 0 {
+			dirs = append(dirs, TOP)
+		} else if c.J-1 >= 0 && t.Cell(c.I, c.J-1).B == 0 {
+			dirs = append(dirs, LEFT)
+		} else {
+			if c.I+1 < t.E && t.Cell(c.I+1, c.J).B == 0 {
+				dirs = append(dirs, BOTTOM)
+			}
+			if c.J+1 < t.E && t.Cell(c.I, c.J+1).B == 0 {
+				dirs = append(dirs, RIGHT)
+			}
+		}
+		if len(dirs) == 0 {
+			fmt.Printf("!!!!!!!! len(dirs) == 0, c.I=%v, c.J=%v, block=%v, trace=%v, c.B=%v\n", c.I, c.J, block, trace, c.B)
+			if len(trace) <= 1 {
+				return nil // TODO
+			}
+			trace = trace[:len(trace)-1]
+			continue
+		}
+
+		fmt.Printf("#### trace=%v, c.index=%v\n", trace, t.Index(c.I, c.J))
+		dir := dirs[rand.Intn(len(dirs))]
+		switch dir {
+		case TOP:
+			c = t.Cell(c.I-1, c.J)
+			c.B = block
+			trace = append(trace, t.Index(c.I, c.J))
+			count++
+		case BOTTOM:
+			c = t.Cell(c.I+1, c.J)
+			c.B = block
+			trace = append(trace, t.Index(c.I, c.J))
+			count++
+		case LEFT:
+			c = t.Cell(c.I, c.J-1)
+			c.B = block
+			trace = append(trace, t.Index(c.I, c.J))
+			count++
+		case RIGHT:
+			c = t.Cell(c.I, c.J+1)
+			c.B = block
+			trace = append(trace, t.Index(c.I, c.J))
+			count++
+		}
+	}
+
 	return t
 }
 
@@ -105,12 +196,10 @@ func (t *Terminal) genPuzzle(minSubGiven int, minTotalGiven int) *Terminal {
 			}
 		}
 	}
-
 	return t
 }
 
 func digitsDisorder(digits []int) []int {
-	rand.Seed(time.Now().Unix())
 	for i := 0; i < len(digits); i++ {
 		random := rand.Intn(len(digits))
 		digits[i], digits[random] = digits[random], digits[i]
