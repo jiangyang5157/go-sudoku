@@ -1,5 +1,19 @@
 package sudoku
 
+import (
+	"fmt"
+	"testing"
+)
+
+func Test_digitsDisorder(t *testing.T) {
+	var digits []int = make([]int, 9)
+	for i := range digits {
+		digits[i] = i
+	}
+	digitsDisorder(digits)
+	fmt.Printf("After digitsDisorder: %d \n", digits)
+}
+
 // func Test_GeneratePuzzle(t *testing.T) {
 // 	squares := 4
 // 	minSubGiven := 10

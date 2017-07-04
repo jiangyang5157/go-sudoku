@@ -1,5 +1,19 @@
 package sudoku
 
+import (
+	"math/rand"
+	"time"
+)
+
+func digitsDisorder(digits []int) []int {
+	rand.Seed(time.Now().Unix())
+	for i := 0; i < len(digits); i++ {
+		random := rand.Intn(len(digits))
+		digits[i], digits[random] = digits[random], digits[i]
+	}
+	return digits
+}
+
 // // Generate unique solution puzzle.
 // func GeneratePuzzle(squares int, minSubGiven int, minTotalGiven int) string {
 // 	p := newPuzzle(squares)

@@ -1,6 +1,7 @@
 package sudoku
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -63,4 +64,9 @@ func Test_Clone(t *testing.T) {
 	if rawT.E != 2 || copyT.E != 9 {
 		t.Error("Clone failed")
 	}
+}
+
+func Test_String(t *testing.T) {
+	terminal, _ := Raw2Terminal(terminalJson_9x9_2)
+	fmt.Println(terminal)
 }
