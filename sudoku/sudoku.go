@@ -49,3 +49,12 @@ func (s *sudoku) initialize() {
 		}
 	}
 }
+
+func (s *sudoku) hasUniqueSolution() bool {
+	found := 0
+	s.x.Search(func(dlx.Solution) bool {
+		found++
+		return found > 1
+	})
+	return found == 1
+}

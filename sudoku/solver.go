@@ -3,69 +3,28 @@ package sudoku
 import "github.com/jiangyang5157/go-dlx/dlx"
 
 func Solve(rawJson []byte) []byte {
-	rawT, err := Raw2Terminal(rawJson)
-	if err != nil {
-		return nil
-	}
+	rawT, _ := Raw2Terminal(rawJson)
 	s := newSudoku(rawT)
 	s.initialize()
-	retT := s.solve()
-	retJson, err := Terminal2Raw(retT)
-	if err != nil {
-		return nil
-	}
+	var retT *Terminal
+	s.solve(func(t *Terminal) bool {
+		retT = t
+		return true
+	})
+	retJson, _ := Terminal2Raw(retT)
 	return retJson
 }
 
-func (s *sudoku) solve() *Terminal {
-	ret := s.t.Clone()
-	return ret
-}
-
-// =============================================================================
-// @deprecated everything below
-// =============================================================================
-// prefix < '0' && prefix != whatever representing unknown digit in the raw
-const SOLUTION_PREFIX byte = '#'
-
-func SolveRaw(squares int, raw string, solutions int) string {
-	return SolveDigits(squares, raw2digits(raw), solutions)
-}
-
-func SolveDigits(squares int, digits []int, solutions int) string {
-	p := newPuzzle(squares)
-	err := p.build(digits)
-	if err != nil {
-		return ""
-	}
-	return p.solve(solutions)
-}
-
-func (p *puzzle) solve(solutions int) string {
-	var ret []byte
-	count := 0
-	p.Search(func(sol dlx.Solution) bool {
-		bs := make([]byte, p.cells)
+func (s *sudoku) solve(f func(*Terminal) bool) {
+	s.x.Search(func(sol dlx.Solution) bool {
+		t := s.t.Clone()
 		for _, nd := range sol {
-			nd_row_col_index := nd.Row.Col.Index             // [offset1 + 1, offset2]
-			nd_row_right_col_index := nd.Row.Right.Col.Index // [offset2 + 1, offset3]
-			index := nd_row_col_index - 1
-			digit := (nd_row_right_col_index - 1) % p.edge // [0, cells - 1]
-			bs[index] = byte(digit) + '1'
+			nd_row_col_index := nd.Row.Col.Index             // [cellConstraintOffset + 1, rowConstraintOffset]
+			nd_row_right_col_index := nd.Row.Right.Col.Index // [rowConstraintOffset + 1, columnConstraintOffset]
+			index := nd_row_col_index - 1                    // [0, cells - 1]
+			digit := (nd_row_right_col_index-1)%s.t.E + 1    // [0, edge - 1]
+			t.C[index].D = digit
 		}
-		ret = append(ret, SOLUTION_PREFIX)
-		ret = append(ret, bs...)
-		count++
-		return count >= solutions
+		return f(t)
 	})
-	return string(ret)
-}
-
-func (p *puzzle) HasUniqueSolution() bool {
-	count := 0
-	p.Search(func(sol dlx.Solution) bool {
-		count++
-		return count > 1
-	})
-	return count == 1
 }
