@@ -7,9 +7,7 @@ import (
 
 /*
 E: Edge length of the TerminalJson
-C: Each cell in the TerminalJson
-I: Index i in the TerminalJson
-J: Index j in the TerminalJson
+C: Each cell in the TerminalJson. They are following left-to-right(columns) && up-to-down(rows) order.
 B: Block that the Cell belongs to
 D: Digit that the Cell hold
 */
@@ -20,25 +18,15 @@ type TerminalJson struct {
 }
 
 type Cell struct {
-	I int `json:"I"`
-	J int `json:"J"`
 	B int `json:"B"`
 	D int `json:"D"`
 }
 
 func NewTerminalJson(edge int) *TerminalJson {
-	ret := &TerminalJson{E: edge}
-	cells := edge * edge
-	ret.C = make([]Cell, cells)
-	index := 0
-	for i := 0; i < edge; i++ {
-		for j := 0; j < edge; j++ {
-			ret.C[index].I = i
-			ret.C[index].J = j
-			index++
-		}
+	return &TerminalJson{
+		E: edge,
+		C: make([]Cell, edge*edge),
 	}
-	return ret
 }
 
 func Raw2TerminalJson(raw []byte) (*TerminalJson, error) {
@@ -64,21 +52,27 @@ func (t *TerminalJson) Clone() *TerminalJson {
 	return ret
 }
 
-func (t *TerminalJson) Cell(i int, j int) *Cell {
-	return &t.C[t.Index(i, j)]
+func (t *TerminalJson) Cell(row int, col int) *Cell {
+	return &t.C[t.Index(row, col)]
 }
 
-func (t *TerminalJson) Index(i int, j int) int {
-	return i*t.E + j
+func (t *TerminalJson) Index(row int, col int) int {
+	return row*t.E + col
+}
+
+func (t *TerminalJson) RowCol(index int) (row, col int) {
+	row = index / t.E
+	col = index % t.E
+	return
 }
 
 func (t *TerminalJson) String() string {
 	const ASCII_0 = '0'
-	ret := fmt.Sprintf("Terminal: E=%c, []{D(I,J,B)}=\n", t.E+ASCII_0)
+	ret := fmt.Sprintf("Terminal: E=%c, {D[B]...}=\n", t.E+ASCII_0)
 	for i := 0; i < t.E; i++ {
 		for j := 0; j < t.E; j++ {
 			c := t.Cell(i, j)
-			ret += fmt.Sprintf("%c(%c,%c,%c),", c.D+ASCII_0, c.I+ASCII_0, c.J+ASCII_0, c.B+ASCII_0)
+			ret += fmt.Sprintf("%c[%c],", c.D+ASCII_0, c.B+ASCII_0)
 		}
 		ret += "\n"
 	}

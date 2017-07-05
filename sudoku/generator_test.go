@@ -5,10 +5,6 @@ import (
 	"testing"
 )
 
-func Test_genTerminal(t *testing.T) {
-	fmt.Printf("Test_genTerminal_9x9:\n%v\n", genTerminal(9, SQUARE, 4, 44))
-}
-
 func Test_genMaterial(t *testing.T) {
 	fmt.Printf("Test_genMaterial:\n%v\n", NewTerminalJson(9).genMaterial())
 }
@@ -20,6 +16,10 @@ func Test_genBlock(t *testing.T) {
 }
 
 func Test_genPuzzle(t *testing.T) {
+	// TODO
+}
+
+func Test_genTerminal(t *testing.T) {
 	// TODO
 }
 

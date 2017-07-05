@@ -11,26 +11,18 @@ var terminalJson = []byte(`
 	"E":2,
 	"C":[
     {
-      "I":0,
-      "J":0,
       "B":0,
       "D":1
     },
     {
-      "I":0,
-      "J":1,
       "B":0,
       "D":2
     },
     {
-      "I":1,
-      "J":0,
       "B":1,
       "D":1
     },
     {
-      "I":1,
-      "J":1,
       "B":1,
       "D":0
     }
@@ -43,7 +35,7 @@ func Test_Raw2Terminal(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if terminal.E != 2 || terminal.C[3].I != 1 || terminal.C[3].J != 1 || terminal.C[3].B != 1 || terminal.C[3].D != 0 {
+	if terminal.E != 2 || terminal.C[3].B != 1 || terminal.C[3].D != 0 {
 		t.Error("Incorrect puzzle data")
 	}
 }

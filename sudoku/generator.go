@@ -48,7 +48,8 @@ func (t *TerminalJson) genBlock(mode GenMode) *TerminalJson {
 		square := int(math.Sqrt(float64(t.E)))
 		for i := 0; i < len(t.C); i++ {
 			c := &t.C[i]
-			c.B = (c.I/square)*square + c.J/square
+			row, col := t.RowCol(i)
+			c.B = (row/square)*square + col/square
 		}
 		return t
 	case RANDOM:

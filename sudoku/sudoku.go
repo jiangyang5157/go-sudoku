@@ -28,12 +28,14 @@ func (s *sudoku) initialize() *sudoku {
 	s.x = *dlx.NewX(blockConstraintOffset + cells)
 	for i := 0; i < cells; i++ {
 		c := &s.t.C[i]
+		row, col := s.t.RowCol(i)
+
 		if c.D >= 1 && c.D <= s.t.E {
 			// valid digit
 			s.x.AddRow([]int{
 				cellConstraintOffset + i + 1,
-				rowConstraintOffset + c.I*s.t.E + c.D,
-				columnConstraintOffset + c.J*s.t.E + c.D,
+				rowConstraintOffset + row*s.t.E + c.D,
+				columnConstraintOffset + col*s.t.E + c.D,
 				blockConstraintOffset + c.B*s.t.E + c.D,
 			})
 		} else {
@@ -41,8 +43,8 @@ func (s *sudoku) initialize() *sudoku {
 			for n := 1; n <= s.t.E; n++ {
 				s.x.AddRow([]int{
 					cellConstraintOffset + i + 1,
-					rowConstraintOffset + c.I*s.t.E + n,
-					columnConstraintOffset + c.J*s.t.E + n,
+					rowConstraintOffset + row*s.t.E + n,
+					columnConstraintOffset + col*s.t.E + n,
 					blockConstraintOffset + c.B*s.t.E + n,
 				})
 			}
