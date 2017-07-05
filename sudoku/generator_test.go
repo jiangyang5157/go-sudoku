@@ -6,19 +6,21 @@ import (
 )
 
 func Test_genTerminal(t *testing.T) {
-	fmt.Printf("Test_genTerminal_9x9:\n%v\n", genTerminal(9, REGULAR, 4, 44))
+	fmt.Printf("Test_genTerminal_9x9:\n%v\n", genTerminal(9, SQUARE, 4, 44))
 }
 
 func Test_genMaterial(t *testing.T) {
-	fmt.Printf("Test_genMaterial:\n%v\n", newTerminal(9).genMaterial())
+	fmt.Printf("Test_genMaterial:\n%v\n", NewTerminal(9).genMaterial())
 }
 
-func Test_genBlock_REGULAR(t *testing.T) {
-	fmt.Printf("Test_genBlock_REGULAR:\n%v\n", newTerminal(9).genBlock(REGULAR))
+func Test_genBlock(t *testing.T) {
+	fmt.Printf("Test_genBlock SQUARE:\n%v\n", NewTerminal(9).genBlock(SQUARE))
+	fmt.Printf("Test_genBlock RAMDOM:\n%v\n", NewTerminal(9).genBlock(RANDOM))
+	fmt.Printf("Test_genBlock IRREGULAR:\n%v\n", NewTerminal(9).genBlock(IRREGULAR))
 }
 
-func Test_genBlock_IRREGULAR(t *testing.T) {
-	fmt.Printf("Test_genBlock_IRREGULAR:\n%v\n", newTerminal(9).genBlock(IRREGULAR))
+func Test_genPuzzle(t *testing.T) {
+	// TODO
 }
 
 func Test_digitsDisorder(t *testing.T) {
@@ -26,6 +28,6 @@ func Test_digitsDisorder(t *testing.T) {
 	for i := range digits {
 		digits[i] = i
 	}
-	digitsDisorder(digits)
+	disorderDigits(digits)
 	fmt.Printf("Test_digitsDisorder:\n%d\n", digits)
 }

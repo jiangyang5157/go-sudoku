@@ -1,7 +1,6 @@
 package sudoku
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -10,17 +9,18 @@ import (
 type GenMode int
 
 const (
-	REGULAR GenMode = iota
+	SQUARE GenMode = iota
+	RANDOM
 	IRREGULAR
 )
 
 type DIRECTION int
 
 const (
-	TOP DIRECTION = iota
-	BOTTOM
-	LEFT
-	RIGHT
+	U DIRECTION = iota
+	D
+	L
+	R
 )
 
 func GenString(edge int, mode GenMode, minSubGiven int, minTotalGiven int) string {
@@ -35,10 +35,7 @@ func GenByte(edge int, mode GenMode, minSubGiven int, minTotalGiven int) []byte 
 
 func genTerminal(edge int, mode GenMode, minSubGiven int, minTotalGiven int) *Terminal {
 	rand.Seed(time.Now().Unix())
-	t := newTerminal(edge).genBlock(mode)
-	if t == nil {
-		return nil
-	}
+	t := NewTerminal(edge).genBlock(mode)
 	t = t.genMaterial()
 	t = solve(t)
 	t = t.genPuzzle(minSubGiven, minTotalGiven)
@@ -47,103 +44,42 @@ func genTerminal(edge int, mode GenMode, minSubGiven int, minTotalGiven int) *Te
 
 func (t *Terminal) genBlock(mode GenMode) *Terminal {
 	switch mode {
-	case REGULAR:
+	case SQUARE:
 		square := int(math.Sqrt(float64(t.E)))
 		for i := 0; i < len(t.C); i++ {
 			c := &t.C[i]
 			c.B = (c.I/square)*square + c.J/square
 		}
 		return t
-	case IRREGULAR:
+	case RANDOM:
+		tmp := disorderDigits(increasingDigits(0, len(t.C)-1))
 		b := t.E - 1
-		for i := 0; i < len(t.C); i++ {
-			if b <= 0 {
+		index := 0
+		for i := 0; i < t.E; i++ {
+			if b < 1 {
 				break
 			}
-			c := &t.C[i]
-			if c.B == 0 {
-				t = t.genCellBlockTop2BottomAndLeft2Right(i, b)
-				b--
+			for j := 0; j < t.E; j++ {
+				t.C[tmp[index]].B = b
+				index++
 			}
+			b--
 		}
+		return t
+	case IRREGULAR:
+		// TODO
 		return t
 	default:
 		return nil
 	}
 }
 
-func (t *Terminal) genCellBlockTop2BottomAndLeft2Right(index int, block int) *Terminal {
-	var c *Cell
-	var trace []int
-	count := 0
-
-	c = &t.C[index]
-	c.B = block
-	trace = append(trace, index)
-	count++
-
-	for count < t.E {
-		c = &t.C[trace[len(trace)-1]]
-		dirs := []DIRECTION{}
-		if c.I-1 >= 0 && t.Cell(c.I-1, c.J).B == 0 {
-			dirs = append(dirs, TOP)
-		} else if c.J-1 >= 0 && t.Cell(c.I, c.J-1).B == 0 {
-			dirs = append(dirs, LEFT)
-		} else {
-			if c.I+1 < t.E && t.Cell(c.I+1, c.J).B == 0 {
-				dirs = append(dirs, BOTTOM)
-			}
-			if c.J+1 < t.E && t.Cell(c.I, c.J+1).B == 0 {
-				dirs = append(dirs, RIGHT)
-			}
-		}
-		if len(dirs) == 0 {
-			fmt.Printf("!!!!!!!! len(dirs) == 0, c.I=%v, c.J=%v, block=%v, trace=%v, c.B=%v\n", c.I, c.J, block, trace, c.B)
-			if len(trace) <= 1 {
-				return nil // TODO
-			}
-			trace = trace[:len(trace)-1]
-			continue
-		}
-
-		fmt.Printf("#### trace=%v, c.index=%v\n", trace, t.Index(c.I, c.J))
-		dir := dirs[rand.Intn(len(dirs))]
-		switch dir {
-		case TOP:
-			c = t.Cell(c.I-1, c.J)
-			c.B = block
-			trace = append(trace, t.Index(c.I, c.J))
-			count++
-		case BOTTOM:
-			c = t.Cell(c.I+1, c.J)
-			c.B = block
-			trace = append(trace, t.Index(c.I, c.J))
-			count++
-		case LEFT:
-			c = t.Cell(c.I, c.J-1)
-			c.B = block
-			trace = append(trace, t.Index(c.I, c.J))
-			count++
-		case RIGHT:
-			c = t.Cell(c.I, c.J+1)
-			c.B = block
-			trace = append(trace, t.Index(c.I, c.J))
-			count++
-		}
-	}
-
-	return t
-}
-
 // Fill diagonal square by random digits, returns the Terminal which should have solution
 func (t *Terminal) genMaterial() *Terminal {
-	tmp := make([]int, t.E)
-	for i := range tmp {
-		tmp[i] = i + 1 // [1, t.E]
-	}
+	tmp := increasingDigits(1, t.E)
 	square := int(math.Sqrt(float64(t.E)))
 	for i := 0; i < t.E; i += square + 1 {
-		digits := digitsDisorder(tmp)
+		digits := disorderDigits(tmp)
 		for j := 0; j < t.E; j++ {
 			row := j/square + (i/square)*square
 			col := j%square + (i/square)*square
@@ -157,21 +93,20 @@ func (t *Terminal) genPuzzle(minSubGiven int, minTotalGiven int) *Terminal {
 	remainTotalGiven := len(t.C)
 	remainRowGiven := make([]int, t.E)
 	remainColumnGiven := make([]int, t.E)
-
 	tmp1 := make([]int, t.E)
 	tmp2 := make([]int, t.E)
 	for i := 0; i < t.E; i++ {
 		remainRowGiven[i] = t.E
 		remainColumnGiven[i] = t.E
 		tmp1[i] = i // [0, t.E - 1]
-		tmp2[i] = i // [0, t.E - 1]
+		tmp2[i] = i
 	}
 
 	s := newSudoku(t)
-	dd1 := digitsDisorder(tmp1)
+	dd1 := disorderDigits(tmp1)
 	for dd1i := 0; dd1i < t.E; dd1i++ {
 		row := dd1[dd1i]
-		dd2 := digitsDisorder(tmp2)
+		dd2 := disorderDigits(tmp2)
 		for dd2i := 0; dd2i < t.E; dd2i++ {
 			col := dd2[dd2i]
 			switch {
@@ -199,10 +134,18 @@ func (t *Terminal) genPuzzle(minSubGiven int, minTotalGiven int) *Terminal {
 	return t
 }
 
-func digitsDisorder(digits []int) []int {
-	for i := 0; i < len(digits); i++ {
-		random := rand.Intn(len(digits))
-		digits[i], digits[random] = digits[random], digits[i]
+func increasingDigits(start, end int) []int {
+	ret := make([]int, end-start+1)
+	for i := range ret {
+		ret[i] = i + start
 	}
-	return digits
+	return ret
+}
+
+func disorderDigits(src []int) []int {
+	for i := 0; i < len(src); i++ {
+		random := rand.Intn(len(src))
+		src[i], src[random] = src[random], src[i]
+	}
+	return src
 }

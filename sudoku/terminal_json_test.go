@@ -67,5 +67,5 @@ func Test_Clone(t *testing.T) {
 }
 
 func Test_newTerminal(t *testing.T) {
-	fmt.Printf("Test_newTerminal:\n%v\n", newTerminal(9))
+	fmt.Printf("Test_newTerminal:\n%v\n", NewTerminal(9))
 }

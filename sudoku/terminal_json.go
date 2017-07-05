@@ -26,7 +26,7 @@ type Cell struct {
 	D int `json:"D"`
 }
 
-func newTerminal(edge int) *Terminal {
+func NewTerminal(edge int) *Terminal {
 	ret := &Terminal{E: edge}
 	cells := edge * edge
 	ret.C = make([]Cell, cells)
