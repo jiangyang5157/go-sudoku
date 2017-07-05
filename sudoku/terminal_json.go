@@ -6,14 +6,14 @@ import (
 )
 
 /*
-E: Edge length of the Terminal
-C: Each cell in the Terminal
-I: Index i in the Terminal
-J: Index j in the Terminal
+E: Edge length of the TerminalJson
+C: Each cell in the TerminalJson
+I: Index i in the TerminalJson
+J: Index j in the TerminalJson
 B: Block that the Cell belongs to
 D: Digit that the Cell hold
 */
-type Terminal struct {
+type TerminalJson struct {
 	fmt.Stringer
 	E int    `json:"E"`
 	C []Cell `json:"C"`
@@ -26,8 +26,8 @@ type Cell struct {
 	D int `json:"D"`
 }
 
-func NewTerminal(edge int) *Terminal {
-	ret := &Terminal{E: edge}
+func NewTerminalJson(edge int) *TerminalJson {
+	ret := &TerminalJson{E: edge}
 	cells := edge * edge
 	ret.C = make([]Cell, cells)
 	index := 0
@@ -41,8 +41,8 @@ func NewTerminal(edge int) *Terminal {
 	return ret
 }
 
-func Raw2Terminal(raw []byte) (*Terminal, error) {
-	var ret *Terminal
+func Raw2TerminalJson(raw []byte) (*TerminalJson, error) {
+	var ret *TerminalJson
 	err := json.Unmarshal(raw, &ret)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func Raw2Terminal(raw []byte) (*Terminal, error) {
 	return ret, nil
 }
 
-func Terminal2Raw(t *Terminal) ([]byte, error) {
+func TerminalJson2Raw(t *TerminalJson) ([]byte, error) {
 	ret, err := json.Marshal(t)
 	if err != nil {
 		return nil, err
@@ -58,21 +58,21 @@ func Terminal2Raw(t *Terminal) ([]byte, error) {
 	return ret, nil
 }
 
-func (t *Terminal) Clone() *Terminal {
-	raw, _ := Terminal2Raw(t)
-	ret, _ := Raw2Terminal(raw)
+func (t *TerminalJson) Clone() *TerminalJson {
+	raw, _ := TerminalJson2Raw(t)
+	ret, _ := Raw2TerminalJson(raw)
 	return ret
 }
 
-func (t *Terminal) Cell(i int, j int) *Cell {
+func (t *TerminalJson) Cell(i int, j int) *Cell {
 	return &t.C[t.Index(i, j)]
 }
 
-func (t *Terminal) Index(i int, j int) int {
+func (t *TerminalJson) Index(i int, j int) int {
 	return i*t.E + j
 }
 
-func (t *Terminal) String() string {
+func (t *TerminalJson) String() string {
 	const ASCII_0 = '0'
 	ret := fmt.Sprintf("Terminal: E=%c, []{D(I,J,B)}=\n", t.E+ASCII_0)
 	for i := 0; i < t.E; i++ {

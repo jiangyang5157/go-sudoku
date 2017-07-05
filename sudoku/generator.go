@@ -29,20 +29,20 @@ func GenString(edge int, mode GenMode, minSubGiven int, minTotalGiven int) strin
 
 func GenByte(edge int, mode GenMode, minSubGiven int, minTotalGiven int) []byte {
 	t := genTerminal(edge, mode, minSubGiven, minTotalGiven)
-	ret, _ := Terminal2Raw(t)
+	ret, _ := TerminalJson2Raw(t)
 	return ret
 }
 
-func genTerminal(edge int, mode GenMode, minSubGiven int, minTotalGiven int) *Terminal {
+func genTerminal(edge int, mode GenMode, minSubGiven int, minTotalGiven int) *TerminalJson {
 	rand.Seed(time.Now().Unix())
-	t := NewTerminal(edge).genBlock(mode)
+	t := NewTerminalJson(edge).genBlock(mode)
 	t = t.genMaterial()
 	t = solve(t)
 	t = t.genPuzzle(minSubGiven, minTotalGiven)
 	return t
 }
 
-func (t *Terminal) genBlock(mode GenMode) *Terminal {
+func (t *TerminalJson) genBlock(mode GenMode) *TerminalJson {
 	switch mode {
 	case SQUARE:
 		square := int(math.Sqrt(float64(t.E)))
@@ -75,7 +75,7 @@ func (t *Terminal) genBlock(mode GenMode) *Terminal {
 }
 
 // Fill diagonal square by random digits, returns the Terminal which should have solution
-func (t *Terminal) genMaterial() *Terminal {
+func (t *TerminalJson) genMaterial() *TerminalJson {
 	tmp := increasingDigits(1, t.E)
 	square := int(math.Sqrt(float64(t.E)))
 	for i := 0; i < t.E; i += square + 1 {
@@ -89,7 +89,7 @@ func (t *Terminal) genMaterial() *Terminal {
 	return t
 }
 
-func (t *Terminal) genPuzzle(minSubGiven int, minTotalGiven int) *Terminal {
+func (t *TerminalJson) genPuzzle(minSubGiven int, minTotalGiven int) *TerminalJson {
 	remainTotalGiven := len(t.C)
 	remainRowGiven := make([]int, t.E)
 	remainColumnGiven := make([]int, t.E)

@@ -4,10 +4,10 @@ import "github.com/jiangyang5157/go-dlx/dlx"
 
 type sudoku struct {
 	x dlx.X
-	t *Terminal
+	t *TerminalJson
 }
 
-func newSudoku(terminal *Terminal) *sudoku {
+func newSudoku(terminal *TerminalJson) *sudoku {
 	return &sudoku{t: terminal}
 }
 
@@ -51,7 +51,7 @@ func (s *sudoku) initialize() *sudoku {
 	return s
 }
 
-func (s *sudoku) solve(f func(*Terminal) bool) {
+func (s *sudoku) solve(f func(*TerminalJson) bool) {
 	s.x.Search(func(sol dlx.Solution) bool {
 		t := s.t.Clone()
 		for _, nd := range sol {

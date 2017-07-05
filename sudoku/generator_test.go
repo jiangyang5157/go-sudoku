@@ -10,13 +10,13 @@ func Test_genTerminal(t *testing.T) {
 }
 
 func Test_genMaterial(t *testing.T) {
-	fmt.Printf("Test_genMaterial:\n%v\n", NewTerminal(9).genMaterial())
+	fmt.Printf("Test_genMaterial:\n%v\n", NewTerminalJson(9).genMaterial())
 }
 
 func Test_genBlock(t *testing.T) {
-	fmt.Printf("Test_genBlock SQUARE:\n%v\n", NewTerminal(9).genBlock(SQUARE))
-	fmt.Printf("Test_genBlock RAMDOM:\n%v\n", NewTerminal(9).genBlock(RANDOM))
-	fmt.Printf("Test_genBlock IRREGULAR:\n%v\n", NewTerminal(9).genBlock(IRREGULAR))
+	fmt.Printf("Test_genBlock SQUARE:\n%v\n", NewTerminalJson(9).genBlock(SQUARE))
+	fmt.Printf("Test_genBlock RAMDOM:\n%v\n", NewTerminalJson(9).genBlock(RANDOM))
+	fmt.Printf("Test_genBlock IRREGULAR:\n%v\n", NewTerminalJson(9).genBlock(IRREGULAR))
 }
 
 func Test_genPuzzle(t *testing.T) {

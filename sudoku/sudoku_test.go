@@ -3,7 +3,7 @@ package sudoku
 import "testing"
 
 func Test_newSudoku_initialize(t *testing.T) {
-	terminal, _ := Raw2Terminal(terminalJson)
+	terminal, _ := Raw2TerminalJson(terminalJson)
 	s := newSudoku(terminal)
 	s.initialize()
 	if s.t.E != 2 || s.t.C[3].I != 1 || s.t.C[3].J != 1 || s.t.C[3].B != 1 || s.t.C[3].D != 0 {
@@ -12,49 +12,49 @@ func Test_newSudoku_initialize(t *testing.T) {
 }
 
 func Test_hasUniqueSolution(t *testing.T) {
-	terminal, _ := Raw2Terminal(terminalJson_9x9_0)
+	terminal, _ := Raw2TerminalJson(terminalJson_9x9_0)
 	s := newSudoku(terminal)
 	s.initialize()
 	if s.hasUniqueSolution() {
 		t.Error("terminalJson_9x9_0 should not have unique solution")
 	}
 
-	terminal, _ = Raw2Terminal(terminalJson_9x9_1)
+	terminal, _ = Raw2TerminalJson(terminalJson_9x9_1)
 	s = newSudoku(terminal)
 	s.initialize()
 	if !s.hasUniqueSolution() {
 		t.Error("terminalJson_9x9_1 should have unique solution")
 	}
 
-	terminal, _ = Raw2Terminal(terminalJson_9x9_2)
+	terminal, _ = Raw2TerminalJson(terminalJson_9x9_2)
 	s = newSudoku(terminal)
 	s.initialize()
 	if s.hasUniqueSolution() {
 		t.Error("terminalJson_9x9_2 should not have unique solution")
 	}
 
-	terminal, _ = Raw2Terminal(terminalJson_9x9_188)
+	terminal, _ = Raw2TerminalJson(terminalJson_9x9_188)
 	s = newSudoku(terminal)
 	s.initialize()
 	if s.hasUniqueSolution() {
 		t.Error("terminalJson_9x9_188 should not have unique solution")
 	}
 
-	terminal, _ = Raw2Terminal(terminalJson_1x1_1)
+	terminal, _ = Raw2TerminalJson(terminalJson_1x1_1)
 	s = newSudoku(terminal)
 	s.initialize()
 	if !s.hasUniqueSolution() {
 		t.Error("terminalJson_1x1_1 should have unique solution")
 	}
 
-	terminal, _ = Raw2Terminal(terminalJson_4x4_0)
+	terminal, _ = Raw2TerminalJson(terminalJson_4x4_0)
 	s = newSudoku(terminal)
 	s.initialize()
 	if s.hasUniqueSolution() {
 		t.Error("terminalJson_4x4_0 should not have unique solution")
 	}
 
-	terminal, _ = Raw2Terminal(terminalJson_4x4_3)
+	terminal, _ = Raw2TerminalJson(terminalJson_4x4_3)
 	s = newSudoku(terminal)
 	s.initialize()
 	if s.hasUniqueSolution() {
