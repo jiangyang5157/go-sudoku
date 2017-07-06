@@ -9,7 +9,6 @@ import (
 
 func Test_Traversal(t *testing.T) {
 	tJson, _ := Raw2TerminalJson(terminalJson_4x4_3)
-	NewGraph(tJson)
 	g := NewGraph(tJson)
 	nodes := g.Nodes()
 	fmt.Printf("Test_Traversal Size of nodes = %d\n", len(nodes))

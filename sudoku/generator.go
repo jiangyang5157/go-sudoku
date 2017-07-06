@@ -4,6 +4,8 @@ import (
 	"math"
 	"math/rand"
 	"time"
+
+	"github.com/jiangyang5157/go-graph/graph"
 )
 
 type GeneratorMode int
@@ -59,11 +61,29 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 		}
 		return t
 	case IRREGULAR:
-		// TODO
+		g := NewGraph(t)
+		tgtBlock := t.E - 1
+		for i := 0; i < len(t.C); i++ {
+			if tgtBlock <= 0 {
+				// rest of cells belongs to block 0
+				break
+			}
+			if t.C[i].B > 0 {
+				// already be assigned to a particular block
+				continue
+			}
+			genIrregularBlock(t, g, i, tgtBlock)
+			tgtBlock--
+		}
 		return t
 	default:
 		return nil
 	}
+}
+
+func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock int) {
+	nd, _ := g.GetNode(graph.Id(srcIndex))
+	// TODO
 }
 
 // Fill diagonal square by random digits, returns the Terminal which should have solution
