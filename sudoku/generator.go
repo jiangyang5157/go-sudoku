@@ -14,15 +14,6 @@ const (
 	IRREGULAR
 )
 
-type DIRECTION int
-
-const (
-	U DIRECTION = iota
-	D
-	L
-	R
-)
-
 func GenString(edge int, mode GenMode, minSubGiven int, minTotalGiven int) string {
 	return string(GenByte(edge, mode, minSubGiven, minTotalGiven))
 }
@@ -105,6 +96,7 @@ func (t *TerminalJson) genPuzzle(minSubGiven int, minTotalGiven int) *TerminalJs
 
 	s := newSudoku(t)
 	dd1 := disorderDigits(tmp1)
+
 	for dd1i := 0; dd1i < t.E; dd1i++ {
 		row := dd1[dd1i]
 		dd2 := disorderDigits(tmp2)

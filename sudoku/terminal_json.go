@@ -68,10 +68,12 @@ func (t *TerminalJson) RowCol(index int) (row, col int) {
 
 func (t *TerminalJson) String() string {
 	const ASCII_0 = '0'
-	ret := fmt.Sprintf("Terminal: E=%c, {D[B]...}=\n", t.E+ASCII_0)
+	ret := fmt.Sprintf("TerminalJson: E=%c, {D[B]...}=\n", t.E+ASCII_0)
+	index := 0
 	for i := 0; i < t.E; i++ {
 		for j := 0; j < t.E; j++ {
-			c := t.Cell(i, j)
+			c := t.C[index]
+			index++
 			ret += fmt.Sprintf("%c[%c],", c.D+ASCII_0, c.B+ASCII_0)
 		}
 		ret += "\n"
