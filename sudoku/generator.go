@@ -6,25 +6,25 @@ import (
 	"time"
 )
 
-type GenMode int
+type GeneratorMode int
 
 const (
-	SQUARE GenMode = iota
+	SQUARE GeneratorMode = iota
 	RANDOM
 	IRREGULAR
 )
 
-func GenString(edge int, mode GenMode, minSubGiven int, minTotalGiven int) string {
+func GenString(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) string {
 	return string(GenByte(edge, mode, minSubGiven, minTotalGiven))
 }
 
-func GenByte(edge int, mode GenMode, minSubGiven int, minTotalGiven int) []byte {
+func GenByte(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) []byte {
 	t := genTerminal(edge, mode, minSubGiven, minTotalGiven)
 	ret, _ := TerminalJson2Raw(t)
 	return ret
 }
 
-func genTerminal(edge int, mode GenMode, minSubGiven int, minTotalGiven int) *TerminalJson {
+func genTerminal(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) *TerminalJson {
 	rand.Seed(time.Now().Unix())
 	t := NewTerminalJson(edge).genBlock(mode)
 	t = t.genMaterial()
@@ -33,7 +33,7 @@ func genTerminal(edge int, mode GenMode, minSubGiven int, minTotalGiven int) *Te
 	return t
 }
 
-func (t *TerminalJson) genBlock(mode GenMode) *TerminalJson {
+func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 	switch mode {
 	case SQUARE:
 		square := int(math.Sqrt(float64(t.E)))
