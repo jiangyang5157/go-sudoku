@@ -39,7 +39,7 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 		square := int(math.Sqrt(float64(t.E)))
 		for i := 0; i < len(t.C); i++ {
 			c := &t.C[i]
-			row, col := t.RowCol(i)
+			row, col := t.Row(i), t.Col(i)
 			c.B = (row/square)*square + col/square
 		}
 		return t

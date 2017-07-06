@@ -61,10 +61,12 @@ func (t *TerminalJson) Index(row int, col int) int {
 	return row*t.E + col
 }
 
-func (t *TerminalJson) RowCol(index int) (row, col int) {
-	row = index / t.E
-	col = index % t.E
-	return
+func (t *TerminalJson) Row(index int) int {
+	return index / t.E
+}
+
+func (t *TerminalJson) Col(index int) int {
+	return index % t.E
 }
 
 func (t *TerminalJson) String() string {
@@ -72,7 +74,7 @@ func (t *TerminalJson) String() string {
 	index := 0
 	for i := 0; i < t.E; i++ {
 		for j := 0; j < t.E; j++ {
-			ret += fmt.Sprintf("%v,", t.C[index].String())
+			ret += fmt.Sprintf("%s,", t.C[index].String())
 			index++
 		}
 		ret += "\n"

@@ -6,42 +6,18 @@ import (
 	"testing"
 )
 
-var terminalJson = []byte(`
-{
-	"E":2,
-	"C":[
-    {
-      "B":0,
-      "D":1
-    },
-    {
-      "B":0,
-      "D":2
-    },
-    {
-      "B":1,
-      "D":1
-    },
-    {
-      "B":1,
-      "D":0
-    }
-  ]
-}
-`)
-
 func Test_Raw2Terminal(t *testing.T) {
-	terminal, err := Raw2TerminalJson(terminalJson)
+	terminal, err := Raw2TerminalJson(terminalJson_4x4_3)
 	if err != nil {
 		t.Error(err)
 	}
-	if terminal.E != 2 || terminal.C[3].B != 1 || terminal.C[3].D != 0 {
+	if terminal.E != 4 || terminal.C[2].B != 1 || terminal.C[2].D != 0 {
 		t.Error("Incorrect puzzle data")
 	}
 }
 
 func Test_Terminal2Raw(t *testing.T) {
-	terminal, _ := Raw2TerminalJson(terminalJson)
+	terminal, _ := Raw2TerminalJson(terminalJson_4x4_3)
 	terminalJson2, _ := TerminalJson2Raw(terminal)
 	terminal2, _ := Raw2TerminalJson(terminalJson2)
 	if !reflect.DeepEqual(terminal2, terminal) {
@@ -50,10 +26,10 @@ func Test_Terminal2Raw(t *testing.T) {
 }
 
 func Test_Clone(t *testing.T) {
-	rawT, _ := Raw2TerminalJson(terminalJson)
+	rawT, _ := Raw2TerminalJson(terminalJson_4x4_3)
 	copyT := rawT.Clone()
-	copyT.E = 9
-	if rawT.E != 2 || copyT.E != 9 {
+	copyT.E = 44
+	if rawT.E != 4 || copyT.E != 44 {
 		t.Error("Clone failed")
 	}
 }

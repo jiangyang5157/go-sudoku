@@ -28,7 +28,7 @@ func (s *sudoku) initialize() *sudoku {
 	s.x = *dlx.NewX(blockConstraintOffset + cells)
 	for i := 0; i < cells; i++ {
 		c := &s.t.C[i]
-		row, col := s.t.RowCol(i)
+		row, col := s.t.Row(i), s.t.Col(i)
 
 		if c.D >= 1 && c.D <= s.t.E {
 			// valid digit

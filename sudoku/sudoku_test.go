@@ -3,10 +3,10 @@ package sudoku
 import "testing"
 
 func Test_newSudoku_initialize(t *testing.T) {
-	terminal, _ := Raw2TerminalJson(terminalJson)
+	terminal, _ := Raw2TerminalJson(terminalJson_4x4_3)
 	s := newSudoku(terminal)
 	s.initialize()
-	if s.t.E != 2 || s.t.C[3].B != 1 || s.t.C[3].D != 0 {
+	if s.t.E != 4 || s.t.C[2].B != 1 || s.t.C[2].D != 0 {
 		t.Error("Incorrect sudoku.t data")
 	}
 }
