@@ -18,6 +18,7 @@ type TerminalJson struct {
 }
 
 type Cell struct {
+	fmt.Stringer
 	B int `json:"B"`
 	D int `json:"D"`
 }
@@ -67,16 +68,18 @@ func (t *TerminalJson) RowCol(index int) (row, col int) {
 }
 
 func (t *TerminalJson) String() string {
-	const ASCII_0 = '0'
-	ret := fmt.Sprintf("TerminalJson: E=%c, {D[B]...}=\n", t.E+ASCII_0)
+	ret := fmt.Sprintf("TerminalJson: E=%d, C=\n", t.E)
 	index := 0
 	for i := 0; i < t.E; i++ {
 		for j := 0; j < t.E; j++ {
-			c := t.C[index]
+			ret += fmt.Sprintf("%v,", t.C[index].String())
 			index++
-			ret += fmt.Sprintf("%c[%c],", c.D+ASCII_0, c.B+ASCII_0)
 		}
 		ret += "\n"
 	}
 	return ret
+}
+
+func (c *Cell) String() string {
+	return fmt.Sprintf("%d[%d]", c.D, c.B)
 }
