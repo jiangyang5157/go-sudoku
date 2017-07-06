@@ -47,7 +47,7 @@ func NewGraph(t *TerminalJson) graph.Graph {
 	for i := 0; i < t.E; i++ {
 		for j := 0; j < t.E; j++ {
 			// init the node
-			nd, err := g.GetNode(graph.Id(index))
+			nd, err := g.GetNode(index2id(index))
 			if err != nil {
 				nd = newNode(index, &t.C[index])
 				g.AddNode(nd)
@@ -73,7 +73,7 @@ func NewGraph(t *TerminalJson) graph.Graph {
 }
 
 func addEdge(t *TerminalJson, g graph.Graph, src graph.Node, tgtIndex int) {
-	n, err := g.GetNode(graph.Id(tgtIndex))
+	n, err := g.GetNode(index2id(tgtIndex))
 	if err != nil {
 		n = newNode(tgtIndex, &t.C[tgtIndex])
 		g.AddNode(n)

@@ -1,6 +1,7 @@
 package sudoku
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -82,8 +83,15 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 }
 
 func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock int) {
-	nd, _ := g.GetNode(graph.Id(srcIndex))
+	nd, _ := g.GetNode(index2id(srcIndex))
+	nd.(Node).Cell().B = tgtBlock
 	// TODO
+	visited := 0
+	Traversal(g, nd.Id(), func(nd graph.Node) bool {
+		visited++
+		return false
+	})
+	fmt.Printf("genIrregularBlock Visited: %d nodes\n", visited)
 }
 
 // Fill diagonal square by random digits, returns the Terminal which should have solution
