@@ -59,36 +59,36 @@ func NewGraph(t *TerminalJson) graph.Graph {
 				e := graph.NewEdge(1)
 				g.AddEdge(nd.Id(), n.Id(), e)
 			}
-			// down := index + t.E
-			// if down < len(t.C) {
-			// 	n, err := g.GetNode(graph.Id(down))
-			// 	if err != nil {
-			// 		n = newNode(down, &t.C[down])
-			// 		g.AddNode(n)
-			// 	}
-			// 	e := graph.NewEdge(1)
-			// 	g.AddEdge(nd.Id(), n.Id(), e)
-			// }
-			// left := index - 1
-			// if t.Row(left) == i {
-			// 	n, err := g.GetNode(graph.Id(left))
-			// 	if err != nil {
-			// 		n = newNode(left, &t.C[left])
-			// 		g.AddNode(n)
-			// 	}
-			// 	e := graph.NewEdge(1)
-			// 	g.AddEdge(nd.Id(), n.Id(), e)
-			// }
-			// right := index + 1
-			// if t.Row(right) == i {
-			// 	n, err := g.GetNode(graph.Id(right))
-			// 	if err != nil {
-			// 		n = newNode(right, &t.C[right])
-			// 		g.AddNode(n)
-			// 	}
-			// 	e := graph.NewEdge(1)
-			// 	g.AddEdge(nd.Id(), n.Id(), e)
-			// }
+			down := index + t.E
+			if down < len(t.C) {
+				n, err := g.GetNode(graph.Id(down))
+				if err != nil {
+					n = newNode(down, &t.C[down])
+					g.AddNode(n)
+				}
+				e := graph.NewEdge(1)
+				g.AddEdge(nd.Id(), n.Id(), e)
+			}
+			left := index - 1
+			if left > 0 && t.Row(left) == i {
+				n, err := g.GetNode(graph.Id(left))
+				if err != nil {
+					n = newNode(left, &t.C[left])
+					g.AddNode(n)
+				}
+				e := graph.NewEdge(1)
+				g.AddEdge(nd.Id(), n.Id(), e)
+			}
+			right := index + 1
+			if right > 0 && t.Row(right) == i {
+				n, err := g.GetNode(graph.Id(right))
+				if err != nil {
+					n = newNode(right, &t.C[right])
+					g.AddNode(n)
+				}
+				e := graph.NewEdge(1)
+				g.AddEdge(nd.Id(), n.Id(), e)
+			}
 			index++
 		}
 	}
