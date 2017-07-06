@@ -60,7 +60,7 @@ func NewGraph(t *TerminalJson) graph.Graph {
 			if down < len(t.C) {
 				addEdge(t, g, nd, down)
 			}
-			if left > 0 && t.Row(left) == i {
+			if left >= 0 && t.Row(left) == i {
 				addEdge(t, g, nd, left)
 			}
 			if right < len(t.C) && t.Row(right) == i {

@@ -13,7 +13,7 @@ func Test_Traversal(t *testing.T) {
 	nodes := g.Nodes()
 	fmt.Printf("Test_Traversal Size of nodes = %d\n", len(nodes))
 	visited := 0
-	Traversal(g, index2id(0), func(nd graph.Node) bool {
+	Traversal(g, index2id(2), func(nd graph.Node) bool {
 		visited++
 		return false
 	})

@@ -91,7 +91,7 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock in
 		visited++
 		return false
 	})
-	fmt.Printf("genIrregularBlock Visited: %d nodes\n", visited)
+	fmt.Printf("genIrregularBlock srcIndex: %d, tgtBlock: %v, Visited: %d\n", srcIndex, tgtBlock, visited)
 }
 
 // Fill diagonal square by random digits, returns the Terminal which should have solution
