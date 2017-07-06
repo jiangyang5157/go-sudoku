@@ -84,9 +84,12 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 
 func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock int) {
 	remain := len(t.C) - (t.E-1-tgtBlock)*t.E
+	tgtRemain := remain - t.E
 
+	// ====
 	nd, _ := g.GetNode(index2id(srcIndex))
 	nd.(Node).Cell().B = tgtBlock
+	remain--
 
 	reachable := 0
 	Traversal(g, nd.Id(), func(nd graph.Node) bool {
@@ -95,9 +98,10 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock in
 		}
 		return false
 	})
-
 	fmt.Printf("genIrregularBlock srcIndex: %d, tgtBlock: %v, reachable: %d, remain: %v\n",
 		srcIndex, tgtBlock, reachable, remain)
+	// ====
+
 }
 
 // Fill diagonal square by random digits, returns the Terminal which should have solution
