@@ -1,12 +1,12 @@
 package sudoku
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"time"
 
 	"github.com/jiangyang5157/go-graph/graph"
+	"github.com/jiangyang5157/golang-start/data/stack"
 )
 
 type GeneratorMode int
@@ -64,6 +64,7 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 	case IRREGULAR:
 		g := NewGraph(t)
 		tgtBlock := t.E - 1
+		// gen block follow up-to-down and left-to-right order
 		for i := 0; i < len(t.C); i++ {
 			if tgtBlock <= 0 {
 				// rest of cells belongs to block 0
@@ -85,23 +86,61 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock int) {
 	remain := len(t.C) - (t.E-1-tgtBlock)*t.E
 	tgtRemain := remain - t.E
+	tmpStack := stack.NewStack()
 
-	// ====
-	nd, _ := g.GetNode(index2id(srcIndex))
+	// Because up-to-down and left-to-right, Node(srcIndex) is valid and no further check required
+	var currId graph.Id = index2id(srcIndex)
+	tmpStack.Push(currId) // trace
+	isolateFromUnblocked(t, g, id2index(currId))
+	nd, _ := g.GetNode(currId)
 	nd.(Node).Cell().B = tgtBlock
 	remain--
 
-	reachable := 0
-	Traversal(g, nd.Id(), func(nd graph.Node) bool {
-		if nd.(Node).Cell().B <= 0 {
-			reachable++
-		}
-		return false
-	})
-	fmt.Printf("genIrregularBlock srcIndex: %d, tgtBlock: %v, reachable: %d, remain: %v\n",
-		srcIndex, tgtBlock, reachable, remain)
-	// ====
+	for remain > tgtRemain {
+		// 	reachable := 0
+		// 	Traversal(g, nd.Id(), func(nd graph.Node) bool {
+		// 		if nd.(Node).Cell().B <= 0 {
+		// 			reachable++
+		// 		}
+		// 		return false
+		// 	})
+		// 	fmt.Printf("genIrregularBlock srcIndex: %d, tgtBlock: %v, reachable: %d, remain: %v\n",
+		// 		srcIndex, tgtBlock, reachable, remain)
+		remain--
+	}
+}
 
+func undoIsolateFromUnblocked(t *TerminalJson, g graph.Graph, srcIndex int) {
+	up, down, left, right := t.Up(srcIndex), t.Down(srcIndex), t.Left(srcIndex), t.Right(srcIndex)
+	if up != -1 && t.C[up].B == 0 {
+		addEdge(t, g, up, srcIndex)
+	}
+	if down != -1 && t.C[down].B == 0 {
+		addEdge(t, g, down, srcIndex)
+	}
+	if left != -1 && t.C[left].B == 0 {
+		addEdge(t, g, left, srcIndex)
+	}
+	if right != -1 && t.C[right].B == 0 {
+		addEdge(t, g, right, srcIndex)
+	}
+}
+
+func isolateFromUnblocked(t *TerminalJson, g graph.Graph, srcIndex int) {
+	srcId := index2id(srcIndex)
+	up, down, left, right := t.Up(srcIndex), t.Down(srcIndex), t.Left(srcIndex), t.Right(srcIndex)
+	if up != -1 && t.C[up].B == 0 {
+		g.DeleteEdge(index2id(up), srcId)
+	}
+	if down != -1 && t.C[down].B == 0 {
+		g.DeleteEdge(index2id(down), srcId)
+	}
+	if left != -1 && t.C[left].B == 0 {
+		g.DeleteEdge(index2id(left), srcId)
+	}
+	if right != -1 && t.C[right].B == 0 {
+		g.DeleteEdge(index2id(right), srcId)
+	}
 }
 
 // Fill diagonal square by random digits, returns the Terminal which should have solution

@@ -69,6 +69,38 @@ func (t *TerminalJson) Col(index int) int {
 	return index % t.E
 }
 
+func (t *TerminalJson) Up(index int) int {
+	ret := index - t.E
+	if ret < 0 {
+		return -1
+	}
+	return ret
+}
+
+func (t *TerminalJson) Down(index int) int {
+	ret := index + t.E
+	if ret > len(t.C)-1 {
+		return -1
+	}
+	return ret
+}
+
+func (t *TerminalJson) Left(index int) int {
+	ret := index - 1
+	if ret < 0 || t.Row(ret) != t.Row(index) {
+		return -1
+	}
+	return ret
+}
+
+func (t *TerminalJson) Right(index int) int {
+	ret := index + 1
+	if ret > len(t.C)-1 || t.Row(ret) != t.Row(index) {
+		return -1
+	}
+	return ret
+}
+
 func (t *TerminalJson) String() string {
 	ret := fmt.Sprintf("TerminalJson: E=%d, C=\n", t.E)
 	index := 0

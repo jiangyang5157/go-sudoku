@@ -34,6 +34,11 @@ func index2id(index int) graph.Id {
 	return graph.Id(strconv.Itoa(index))
 }
 
+func id2index(id graph.Id) int {
+	ret, _ := strconv.Atoi(string(id))
+	return ret
+}
+
 func newNode(index int, c *Cell) Node {
 	return &node{
 		index: index,
@@ -47,39 +52,62 @@ func NewGraph(t *TerminalJson) graph.Graph {
 	for i := 0; i < t.E; i++ {
 		for j := 0; j < t.E; j++ {
 			// init the node
-			nd, err := g.GetNode(index2id(index))
+			indexId := index2id(index)
+			nd, err := g.GetNode(indexId)
 			if err != nil {
 				nd = newNode(index, &t.C[index])
 				g.AddNode(nd)
 			}
 			// init it's neighbours
-			up, down, left, right := index-t.E, index+t.E, index-1, index+1
-			if up > 0 {
-				addEdge(t, g, nd, up)
-			}
-			if down < len(t.C) {
-				addEdge(t, g, nd, down)
-			}
-			if left >= 0 && t.Row(left) == i {
-				addEdge(t, g, nd, left)
-			}
-			if right < len(t.C) && t.Row(right) == i {
-				addEdge(t, g, nd, right)
-			}
+			addNeighbours(t, g, index)
 			index++
 		}
 	}
 	return g
 }
 
-func addEdge(t *TerminalJson, g graph.Graph, src graph.Node, tgtIndex int) {
-	n, err := g.GetNode(index2id(tgtIndex))
+func addNeighbours(t *TerminalJson, g graph.Graph, srcIndex int) {
+	up, down, left, right := t.Up(srcIndex), t.Down(srcIndex), t.Left(srcIndex), t.Right(srcIndex)
+	if up != -1 {
+		addEdge(t, g, srcIndex, up)
+	}
+	if down != -1 {
+		addEdge(t, g, srcIndex, down)
+	}
+	if left != -1 {
+		addEdge(t, g, srcIndex, left)
+	}
+	if right != -1 {
+		addEdge(t, g, srcIndex, right)
+	}
+}
+
+func deleteNeighbours(t *TerminalJson, g graph.Graph, srcIndex int) {
+	srcId := index2id(srcIndex)
+	up, down, left, right := t.Up(srcIndex), t.Down(srcIndex), t.Left(srcIndex), t.Right(srcIndex)
+	if up != -1 {
+		g.DeleteEdge(srcId, index2id(up))
+	}
+	if down != -1 {
+		g.DeleteEdge(srcId, index2id(down))
+	}
+	if left != -1 {
+		g.DeleteEdge(srcId, index2id(left))
+	}
+	if right != -1 {
+		g.DeleteEdge(srcId, index2id(right))
+	}
+}
+
+func addEdge(t *TerminalJson, g graph.Graph, srcIndex int, tgtIndex int) {
+	tgtId := index2id(tgtIndex)
+	n, err := g.GetNode(tgtId)
 	if err != nil {
 		n = newNode(tgtIndex, &t.C[tgtIndex])
 		g.AddNode(n)
 	}
 	e := graph.NewEdge(0)
-	g.AddEdge(src.Id(), n.Id(), e)
+	g.AddEdge(index2id(srcIndex), tgtId, e)
 }
 
 func Traversal(g graph.Graph, id graph.Id, f func(graph.Node) bool) {
