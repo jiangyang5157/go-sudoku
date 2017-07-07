@@ -12,30 +12,48 @@ func Test_genMaterial(t *testing.T) {
 func Test_genBlock(t *testing.T) {
 	fmt.Printf("Test_genBlock SQUARE:\n%v\n", NewTerminalJson(9).genBlock(SQUARE))
 	fmt.Printf("Test_genBlock RAMDOM:\n%v\n", NewTerminalJson(9).genBlock(RANDOM))
-	// fmt.Printf("Test_genBlock IRREGULAR:\n%v\n", NewTerminalJson(9).genBlock(IRREGULAR))
+	fmt.Printf("Test_genBlock IRREGULAR:\n%v\n", NewTerminalJson(9).genBlock(IRREGULAR))
 }
 
-// func Test_visiteUnblockedCells(t *testing.T) {
-// 	terminal := NewTerminalJson(9)
-// 	g := NewGraph(terminal)
-// 	reachable := reachableCells(g, index2id(0))
-// 	if reachable != 81 {
-// 		t.Error()
-// 	}
-// 	unlinkedByLinkedNeighbours(terminal, g, 0)
-// 	unlinkedByLinkedNeighbours(terminal, g, 1)
-// 	unlinkedByLinkedNeighbours(terminal, g, 10)
-// 	unlinkedByLinkedNeighbours(terminal, g, 19)
-// 	reachable = reachableCells(g, index2id(2))
-// 	if reachable != 77 {
-// 		t.Error()
-// 	}
-// 	unlinkedByLinkedNeighbours(terminal, g, 18)
-// 	reachable = reachableCells(g, index2id(2))
-// 	if reachable != 75 {
-// 		t.Error()
-// 	}
-// }
+func Test_reachableCells(t *testing.T) {
+	terminal := NewTerminalJson(9)
+	g := newGraph(terminal)
+
+	index := 0
+	fmt.Printf("Test_reachableCells %d: %d\n", index, reachableCells(g, index2id(index)))
+	neighbours := srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+
+	index = 1
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", 0, reachableCells(g, index2id(0)))
+
+	index = 10
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", 1, reachableCells(g, index2id(1)))
+
+	index = 19
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", 10, reachableCells(g, index2id(10)))
+
+	index = 18
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", 19, reachableCells(g, index2id(19)))
+}
 
 func Test_digitsDisorder(t *testing.T) {
 	var digits []int = make([]int, 9)

@@ -1,9 +1,14 @@
 package sudoku
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
+
+	"github.com/jiangyang5157/go-graph/graph"
+	"github.com/jiangyang5157/go-graph/graph/traversal"
+	"github.com/jiangyang5157/golang-start/data/stack"
 )
 
 type GeneratorMode int
@@ -71,7 +76,7 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 				// already be assigned to a particular block
 				continue
 			}
-			// genIrregularBlock(t, g, i, tgtBlock)
+			genIrregularBlock(t, g, i, tgtBlock)
 			tgtBlock--
 		}
 		return t
@@ -80,75 +85,60 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 	}
 }
 
-// func reachableCells(g graph.Graph, id graph.Id) int {
-// 	reachable := 0
-// 	Traversal(g, id, func(nd graph.Node) bool {
-// 		// if nd.(Node).Cell().B <= 0 {
-// 		reachable++
-// 		// }
-// 		return false
-// 	})
-// 	return reachable
-// }
-//
-// func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock int) {
-// 	remain := len(t.C) - (t.E-1-tgtBlock)*t.E
-// 	tgtRemain := remain - t.E
-// 	fmt.Printf("\ntgtBlock: %d, remain: %d, tgtRemain: %d\n", tgtBlock, remain, tgtRemain)
-// 	trace := stack.NewStack()
-//
-// 	// Because of the up-to-down and left-to-right order,
-// 	// C[src] is valid to be the first one of target block.
-// 	unlinkedByLinkedNeighbours(t, g, srcIndex)
-// 	t.C[srcIndex].B = tgtBlock
-// 	trace.Push(srcIndex)
-// 	remain--
-//
-// 	for remain > tgtRemain {
-// 		currIndex := trace.Peek().(int)
-// 		fmt.Printf("\nindex: %v, remain: %v, trace: %v, ", currIndex, remain, trace)
-// 		neighbours := disorderDigits(genLinkedNeighbours(t, g, currIndex))
-// 		fmt.Printf("len(nbs): %d, neighbours: %v, ", len(neighbours), neighbours)
-// 		for _, neighbourIndex := range neighbours {
-// 			fmt.Printf("neighbourIndex: %d, ", neighbourIndex)
-// 			unlinkedByLinkedNeighbours(t, g, neighbourIndex)
-// 			unlink(t, g, currIndex, neighbourIndex)
-// 			t.C[neighbourIndex].B = tgtBlock
-// 			trace.Push(neighbourIndex)
-//
-// 			reachable := reachableCells(g, index2id(currIndex))
-// 			fmt.Printf("reachable: %d, ", reachable)
-// 			if reachable == remain {
-// 				break
-// 			} else {
-// 				fmt.Printf("#Pop# ")
-// 				t.C[neighbourIndex].B = 0
-// 				trace.Pop()
-// 				linkedByLinkedNeighbours(t, g, neighbourIndex)
-// 				link(t, g, currIndex, neighbourIndex)
-// 				continue
-// 			}
-// 		}
-// 		remain--
-// 	}
-// }
-//
-// func linkedByLinkedNeighbours(t *TerminalJson, g graph.Graph, srcIndex int) {
-// 	neighbours := genLinkedNeighbours(t, g, srcIndex)
-// 	for _, neighbour := range neighbours {
-// 		// fmt.Printf("#### addEdge(%v, %v):\n", neighbour, srcIndex)
-// 		addEdge(t, g, neighbour, srcIndex)
-// 	}
-// }
-//
-// func unlinkedByLinkedNeighbours(t *TerminalJson, g graph.Graph, srcIndex int) {
-// 	neighbours := genLinkedNeighbours(t, g, srcIndex)
-// 	srcId := index2id(srcIndex)
-// 	for _, neighbour := range neighbours {
-// 		// fmt.Printf("#### g.DeleteEdge(%v, %v):\n", neighbour, srcId)
-// 		g.DeleteEdge(index2id(neighbour), srcId)
-// 	}
-// }
+func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock int) {
+	remain := len(t.C) - (t.E-1-tgtBlock)*t.E
+	tgtRemain := remain - t.E
+	fmt.Printf("\ntgtBlock: %d, remain: %d, tgtRemain: %d\n", tgtBlock, remain, tgtRemain)
+	trace := stack.NewStack()
+
+	// Because of the up-to-down and left-to-right order,
+	// C[src] is valid to be the first one of target block.
+	neighbourOfNeighbours := srcNeighbours(t, g, srcIndex)
+	srcId = index2id(srcIndex)
+	for _, neighbour := range neighbourOfNeighbours {
+		unlink(g, index2id(neighbour), srcId)
+	}
+	t.C[srcIndex].B = tgtBlock
+	trace.Push(srcIndex)
+	remain--
+
+	for remain > tgtRemain {
+		currIndex := trace.Peek().(int)
+		fmt.Printf("\nindex: %v, remain: %v, trace: %v, ", currIndex, remain, trace)
+		neighbours := disorderDigits(genLinkedNeighbours(t, g, currIndex))
+		fmt.Printf("len(nbs): %d, neighbours: %v, ", len(neighbours), neighbours)
+		for _, neighbourIndex := range neighbours {
+			fmt.Printf("neighbourIndex: %d, ", neighbourIndex)
+			unlinkedByLinkedNeighbours(t, g, neighbourIndex)
+			unlink(t, g, currIndex, neighbourIndex)
+			t.C[neighbourIndex].B = tgtBlock
+			trace.Push(neighbourIndex)
+
+			reachable := reachableCells(g, index2id(currIndex))
+			fmt.Printf("reachable: %d, ", reachable)
+			if reachable == remain {
+				break
+			} else {
+				fmt.Printf("#Pop# ")
+				t.C[neighbourIndex].B = 0
+				trace.Pop()
+				linkedByLinkedNeighbours(t, g, neighbourIndex)
+				link(t, g, currIndex, neighbourIndex)
+				continue
+			}
+		}
+		remain--
+	}
+}
+
+func reachableCells(g graph.Graph, id graph.Id) int {
+	visited := 0
+	traversal.Dfs(g, id, func(nd graph.Node) bool {
+		visited++
+		return false
+	})
+	return visited
+}
 
 // Fill diagonal square by random digits, returns the Terminal which should have solution
 func (t *TerminalJson) genMaterial() *TerminalJson {
