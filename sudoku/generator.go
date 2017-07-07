@@ -88,7 +88,8 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock in
 	tgtRemain := remain - t.E
 	tmpStack := stack.NewStack()
 
-	// Because up-to-down and left-to-right, Node(srcIndex) is valid and no further check required
+	// Because of the up-to-down and left-to-right order,
+	// C[src] is valid to be the first one of target block.
 	var currId graph.Id = index2id(srcIndex)
 	tmpStack.Push(currId) // trace
 	isolateFromUnblocked(t, g, id2index(currId))
