@@ -59,44 +59,32 @@ func NewGraph(t *TerminalJson) graph.Graph {
 				g.AddNode(nd)
 			}
 			// init it's neighbours
-			addNeighbours(t, g, index)
+			neighbours := genNeighbours(t, index)
+			for _, neighbour := range neighbours {
+				addEdge(t, g, index, neighbour)
+			}
 			index++
 		}
 	}
 	return g
 }
 
-func addNeighbours(t *TerminalJson, g graph.Graph, srcIndex int) {
+func genNeighbours(t *TerminalJson, srcIndex int) []int {
+	var ret []int
 	up, down, left, right := t.Up(srcIndex), t.Down(srcIndex), t.Left(srcIndex), t.Right(srcIndex)
 	if up != -1 {
-		addEdge(t, g, srcIndex, up)
+		ret = append(ret, up)
 	}
 	if down != -1 {
-		addEdge(t, g, srcIndex, down)
+		ret = append(ret, down)
 	}
 	if left != -1 {
-		addEdge(t, g, srcIndex, left)
+		ret = append(ret, left)
 	}
 	if right != -1 {
-		addEdge(t, g, srcIndex, right)
+		ret = append(ret, right)
 	}
-}
-
-func deleteNeighbours(t *TerminalJson, g graph.Graph, srcIndex int) {
-	srcId := index2id(srcIndex)
-	up, down, left, right := t.Up(srcIndex), t.Down(srcIndex), t.Left(srcIndex), t.Right(srcIndex)
-	if up != -1 {
-		g.DeleteEdge(srcId, index2id(up))
-	}
-	if down != -1 {
-		g.DeleteEdge(srcId, index2id(down))
-	}
-	if left != -1 {
-		g.DeleteEdge(srcId, index2id(left))
-	}
-	if right != -1 {
-		g.DeleteEdge(srcId, index2id(right))
-	}
+	return ret
 }
 
 func addEdge(t *TerminalJson, g graph.Graph, srcIndex int, tgtIndex int) {

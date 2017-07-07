@@ -1,6 +1,7 @@
 package sudoku
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -83,65 +84,98 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 	}
 }
 
+func visiteUnblockedCells(g graph.Graph, id graph.Id) int {
+	reachable := 0
+	Traversal(g, id, func(nd graph.Node) bool {
+		if nd.(Node).Cell().B <= 0 {
+			reachable++
+		}
+		return false
+	})
+	return reachable
+}
+
 func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock int) {
 	remain := len(t.C) - (t.E-1-tgtBlock)*t.E
 	tgtRemain := remain - t.E
-	tmpStack := stack.NewStack()
+	fmt.Printf("\ntgtBlock: %d, remain: %d, tgtRemain: %d\n", tgtBlock, remain, tgtRemain)
+	trace := stack.NewStack()
 
 	// Because of the up-to-down and left-to-right order,
 	// C[src] is valid to be the first one of target block.
-	var currId graph.Id = index2id(srcIndex)
-	tmpStack.Push(currId) // trace
-	isolateFromUnblocked(t, g, id2index(currId))
-	nd, _ := g.GetNode(currId)
-	nd.(Node).Cell().B = tgtBlock
+	trace.Push(srcIndex)
+	unlinkFromUnblocked(t, g, srcIndex)
+	t.C[srcIndex].B = tgtBlock
 	remain--
 
 	for remain > tgtRemain {
-		// 	reachable := 0
-		// 	Traversal(g, nd.Id(), func(nd graph.Node) bool {
-		// 		if nd.(Node).Cell().B <= 0 {
-		// 			reachable++
-		// 		}
-		// 		return false
-		// 	})
-		// 	fmt.Printf("genIrregularBlock srcIndex: %d, tgtBlock: %v, reachable: %d, remain: %v\n",
-		// 		srcIndex, tgtBlock, reachable, remain)
+		currIndex := trace.Peek().(int)
+		fmt.Printf("\nindex: %v, remain: %v, trace: %v, ", currIndex, remain, trace)
+		neighbours := disorderDigits(genUnblockedNeighbours(t, currIndex))
+		fmt.Printf("len(nbs): %d, neighbours: %v, ", len(neighbours), neighbours)
+		for _, neighbourIndex := range neighbours {
+			trace.Push(neighbourIndex)
+			unlinkFromUnblocked(t, g, neighbourIndex)
+			unlink(t, g, currIndex, neighbourIndex)
+			fmt.Printf("neighbourIndex: %d, ", neighbourIndex)
+
+			reachable := visiteUnblockedCells(g, index2id(currIndex))
+			fmt.Printf("reachable: %d, ", reachable)
+			if reachable == remain-1 {
+				t.C[neighbourIndex].B = tgtBlock
+				break
+			} else {
+				fmt.Printf("#Pop# ")
+				// t.C[neighbourIndex].B = 0
+				linkFromUnblocked(t, g, neighbourIndex)
+				link(t, g, currIndex, neighbourIndex)
+				trace.Pop()
+				continue
+			}
+		}
 		remain--
 	}
 }
 
-func undoIsolateFromUnblocked(t *TerminalJson, g graph.Graph, srcIndex int) {
+func genUnblockedNeighbours(t *TerminalJson, srcIndex int) []int {
+	var ret []int
 	up, down, left, right := t.Up(srcIndex), t.Down(srcIndex), t.Left(srcIndex), t.Right(srcIndex)
 	if up != -1 && t.C[up].B == 0 {
-		addEdge(t, g, up, srcIndex)
+		ret = append(ret, up)
 	}
 	if down != -1 && t.C[down].B == 0 {
-		addEdge(t, g, down, srcIndex)
+		ret = append(ret, down)
 	}
 	if left != -1 && t.C[left].B == 0 {
-		addEdge(t, g, left, srcIndex)
+		ret = append(ret, left)
 	}
 	if right != -1 && t.C[right].B == 0 {
-		addEdge(t, g, right, srcIndex)
+		ret = append(ret, right)
+	}
+	return ret
+}
+
+func linkFromUnblocked(t *TerminalJson, g graph.Graph, srcIndex int) {
+	neighbours := genUnblockedNeighbours(t, srcIndex)
+	for _, neighbour := range neighbours {
+		addEdge(t, g, neighbour, srcIndex)
 	}
 }
 
-func isolateFromUnblocked(t *TerminalJson, g graph.Graph, srcIndex int) {
+func unlinkFromUnblocked(t *TerminalJson, g graph.Graph, srcIndex int) {
+	neighbours := genUnblockedNeighbours(t, srcIndex)
 	srcId := index2id(srcIndex)
-	up, down, left, right := t.Up(srcIndex), t.Down(srcIndex), t.Left(srcIndex), t.Right(srcIndex)
-	if up != -1 && t.C[up].B == 0 {
-		g.DeleteEdge(index2id(up), srcId)
+	for _, neighbour := range neighbours {
+		g.DeleteEdge(index2id(neighbour), srcId)
 	}
-	if down != -1 && t.C[down].B == 0 {
-		g.DeleteEdge(index2id(down), srcId)
-	}
-	if left != -1 && t.C[left].B == 0 {
-		g.DeleteEdge(index2id(left), srcId)
-	}
-	if right != -1 && t.C[right].B == 0 {
-		g.DeleteEdge(index2id(right), srcId)
-	}
+}
+
+func link(t *TerminalJson, g graph.Graph, srcIndex int, tgtIndex int) {
+	addEdge(t, g, srcIndex, tgtIndex)
+}
+
+func unlink(t *TerminalJson, g graph.Graph, srcIndex int, tgtIndex int) {
+	g.DeleteEdge(index2id(srcIndex), index2id(tgtIndex))
 }
 
 // Fill diagonal square by random digits, returns the Terminal which should have solution
