@@ -101,6 +101,24 @@ func (t *TerminalJson) Right(index int) int {
 	return ret
 }
 
+func (t *TerminalJson) neighbours(index int) []int {
+	var ret []int
+	up, down, left, right := t.Up(index), t.Down(index), t.Left(index), t.Right(index)
+	if up != -1 {
+		ret = append(ret, up)
+	}
+	if down != -1 {
+		ret = append(ret, down)
+	}
+	if left != -1 {
+		ret = append(ret, left)
+	}
+	if right != -1 {
+		ret = append(ret, right)
+	}
+	return ret
+}
+
 func (t *TerminalJson) String() string {
 	ret := fmt.Sprintf("TerminalJson: E=%d, C=\n", t.E)
 	index := 0

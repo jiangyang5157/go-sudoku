@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/jiangyang5157/go-graph/graph"
-	"github.com/jiangyang5157/go-graph/graph/traversal"
 )
 
 type Node interface {
@@ -46,22 +45,26 @@ func newNode(index int, c *Cell) Node {
 	}
 }
 
-func NewGraph(t *TerminalJson) graph.Graph {
+func newGraph(t *TerminalJson) graph.Graph {
 	g := graph.NewGraph()
 	index := 0
 	for i := 0; i < t.E; i++ {
 		for j := 0; j < t.E; j++ {
-			// init the node
 			indexId := index2id(index)
 			nd, err := g.GetNode(indexId)
 			if err != nil {
 				nd = newNode(index, &t.C[index])
 				g.AddNode(nd)
 			}
-			// init it's neighbours
-			neighbours := genNeighbours(t, index)
+			neighbours := t.neighbours(index)
 			for _, neighbour := range neighbours {
-				addEdge(t, g, index, neighbour)
+				neighbourId := index2id(neighbour)
+				n, err := g.GetNode(neighbourId)
+				if err != nil {
+					n = newNode(neighbour, &t.C[neighbour])
+					g.AddNode(n)
+				}
+				link(g, indexId, neighbourId)
 			}
 			index++
 		}
@@ -69,35 +72,54 @@ func NewGraph(t *TerminalJson) graph.Graph {
 	return g
 }
 
-func genNeighbours(t *TerminalJson, srcIndex int) []int {
+func link(g graph.Graph, srcId graph.Id, tgtId graph.Id) {
+	g.AddEdge(srcId, tgtId, graph.NewEdge(0))
+}
+
+func unlink(g graph.Graph, srcId graph.Id, tgtId graph.Id) {
+	g.DeleteEdge(srcId, tgtId)
+}
+
+func targetNeighbours(t *TerminalJson, g graph.Graph, index int) []int {
 	var ret []int
-	up, down, left, right := t.Up(srcIndex), t.Down(srcIndex), t.Left(srcIndex), t.Right(srcIndex)
-	if up != -1 {
-		ret = append(ret, up)
-	}
-	if down != -1 {
-		ret = append(ret, down)
-	}
-	if left != -1 {
-		ret = append(ret, left)
-	}
-	if right != -1 {
-		ret = append(ret, right)
+	id := index2id(index)
+	targets, _ := g.GetTargets(id)
+	if targets != nil {
+		up, down, left, right := t.Up(index), t.Down(index), t.Left(index), t.Right(index)
+		if up != -1 && targets[index2id(up)] != nil {
+			ret = append(ret, up)
+		}
+		if down != -1 && targets[index2id(down)] != nil {
+			ret = append(ret, down)
+		}
+		if left != -1 && targets[index2id(left)] != nil {
+			ret = append(ret, left)
+		}
+		if right != -1 && targets[index2id(right)] != nil {
+			ret = append(ret, right)
+		}
 	}
 	return ret
 }
 
-func addEdge(t *TerminalJson, g graph.Graph, srcIndex int, tgtIndex int) {
-	tgtId := index2id(tgtIndex)
-	n, err := g.GetNode(tgtId)
-	if err != nil {
-		n = newNode(tgtIndex, &t.C[tgtIndex])
-		g.AddNode(n)
+func srcNeighbours(t *TerminalJson, g graph.Graph, index int) []int {
+	var ret []int
+	id := index2id(index)
+	srcs, _ := g.GetSources(id)
+	if srcs != nil {
+		up, down, left, right := t.Up(index), t.Down(index), t.Left(index), t.Right(index)
+		if up != -1 && srcs[index2id(up)] != nil {
+			ret = append(ret, up)
+		}
+		if down != -1 && srcs[index2id(down)] != nil {
+			ret = append(ret, down)
+		}
+		if left != -1 && srcs[index2id(left)] != nil {
+			ret = append(ret, left)
+		}
+		if right != -1 && srcs[index2id(right)] != nil {
+			ret = append(ret, right)
+		}
 	}
-	e := graph.NewEdge(0)
-	g.AddEdge(index2id(srcIndex), tgtId, e)
-}
-
-func Traversal(g graph.Graph, id graph.Id, f func(graph.Node) bool) {
-	traversal.Dfs(g, id, f)
+	return ret
 }
