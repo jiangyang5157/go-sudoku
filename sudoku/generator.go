@@ -1,7 +1,6 @@
 package sudoku
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -64,11 +63,12 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 		}
 		return t
 	case IRREGULAR:
+		// TODO temp alg
 		g := newGraph(t)
 		b := t.E - 1
-		test := 1
-		for b != 0 && test < 5 {
-			test++
+		tempMaxRun := 0
+		for b > 0 && tempMaxRun <= 2 {
+			tempMaxRun++
 			// up-to-down, left-to-right
 			for i := 0; i < len(t.C); i++ {
 				if b == 0 {
@@ -84,18 +84,28 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 				}
 			}
 		}
-		fmt.Printf("test: %d\n", test)
+		if b > 0 {
+			count := 0
+			for i := 0; i < len(t.C); i++ {
+				if b == 0 {
+					break
+				}
+				t.C[i].B = b
+				count++
+				if count == t.E {
+					b--
+				}
+			}
+		}
 		return t
 	default:
 		return nil
 	}
 }
 
-//----
 func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) bool {
 	remain := len(t.C) - (t.E-1-block)*t.E
 	tgtRemain := remain - t.E
-	fmt.Printf("######## block=%d, begin=%d, remain=%d, tgtRemain=%d\n", block, begin, remain, tgtRemain)
 
 	// Because of the up-to-down and left-to-right order,
 	// C[begin] is valid to be the first one of target block.
@@ -108,6 +118,7 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) boo
 	t.C[begin].B = block
 	remain--
 
+	var undo []int
 	rand.Seed(time.Now().Unix())
 	for remain > tgtRemain {
 		if trace.IsEmpty() {
@@ -118,13 +129,11 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) boo
 			if trace.IsEmpty() {
 				break
 			}
+
 			index := trace.Peek().(int)
 			nbs := disorderDigits(tgtNeighbours(t, g, index))
-			fmt.Printf("remain=%d, index=%d, nbs=%v, ", remain, index, nbs)
 
 			for _, nb := range nbs {
-				fmt.Printf("nb: %d, ", nb)
-
 				trace.Push(nb)
 				nbsOfNbs := srcNeighbours(t, g, nb)
 				for _, nbOfNbs := range nbsOfNbs {
@@ -141,13 +150,11 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) boo
 					}
 				}
 				visited := reachableNum(g, index2id(indexOfAnyBlock0))
-				fmt.Printf("%d reaches %d\n", indexOfAnyBlock0, visited)
 
 				if visited == remain-1 {
 					ok = true
 					break
 				} else {
-					fmt.Printf("!POP!\n")
 					for _, nbOfNbs := range nbsOfNbs {
 						link(g, index2id(nbOfNbs), index2id(nb))
 					}
@@ -156,7 +163,7 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) boo
 				}
 			}
 			if !ok {
-				trace.Pop()
+				undo = append(undo, trace.Pop().(int))
 			}
 		}
 		remain--
@@ -164,7 +171,16 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) boo
 
 	ret := !trace.IsEmpty()
 	if !ret {
-		fmt.Printf("################!!!!!!!!!!!!!!!!################ !POP begin!\n")
+		for _, v := range undo {
+			nbs := t.Neighbours(v)
+			for _, v2 := range nbs {
+				if t.C[v2].B == block || t.C[v2].B == 0 {
+					link(g, index2id(v), index2id(v2))
+					link(g, index2id(v2), index2id(v))
+				}
+			}
+		}
+
 		for _, nb := range nbsOfBegin {
 			link(g, index2id(nb), index2id(begin))
 		}
