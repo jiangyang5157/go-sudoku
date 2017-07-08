@@ -30,7 +30,6 @@ func GenByte(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) [
 }
 
 func genTerminal(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) *TerminalJson {
-	rand.Seed(time.Now().Unix())
 	t := NewTerminalJson(edge).genBlock(mode)
 	t = t.genMaterial()
 	t = solve(t)
@@ -49,6 +48,7 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 		}
 		return t
 	case RANDOM:
+		rand.Seed(time.Now().Unix())
 		tmp := disorderDigits(increasingDigits(0, len(t.C)-1))
 		b := t.E - 1
 		index := 0
@@ -64,9 +64,10 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 		}
 		return t
 	case IRREGULAR:
-		// g := NewGraph(t)
+		g := newGraph(t)
 		tgtBlock := t.E - 1
 		// gen block follow up-to-down and left-to-right order
+		trace := stack.NewStack()
 		for i := 0; i < len(t.C); i++ {
 			if tgtBlock <= 0 {
 				// rest of cells belongs to block 0
@@ -76,7 +77,7 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 				// already be assigned to a particular block
 				continue
 			}
-			genIrregularBlock(t, g, i, tgtBlock)
+			genIrregularBlock(t, g, i, tgtBlock, trace)
 			tgtBlock--
 		}
 		return t
@@ -85,50 +86,75 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 	}
 }
 
-func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock int) {
+func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock int, trace *stack.Stack) {
 	remain := len(t.C) - (t.E-1-tgtBlock)*t.E
 	tgtRemain := remain - t.E
 	fmt.Printf("\ntgtBlock: %d, remain: %d, tgtRemain: %d\n", tgtBlock, remain, tgtRemain)
-	trace := stack.NewStack()
 
 	// Because of the up-to-down and left-to-right order,
 	// C[src] is valid to be the first one of target block.
+	trace.Push(srcIndex)
 	neighbourOfNeighbours := srcNeighbours(t, g, srcIndex)
-	srcId = index2id(srcIndex)
 	for _, neighbour := range neighbourOfNeighbours {
-		unlink(g, index2id(neighbour), srcId)
+		unlink(g, index2id(neighbour), index2id(srcIndex))
 	}
 	t.C[srcIndex].B = tgtBlock
-	trace.Push(srcIndex)
 	remain--
 
+	rand.Seed(time.Now().Unix())
 	for remain > tgtRemain {
-		currIndex := trace.Peek().(int)
-		fmt.Printf("\nindex: %v, remain: %v, trace: %v, ", currIndex, remain, trace)
-		neighbours := disorderDigits(genLinkedNeighbours(t, g, currIndex))
-		fmt.Printf("len(nbs): %d, neighbours: %v, ", len(neighbours), neighbours)
-		for _, neighbourIndex := range neighbours {
-			fmt.Printf("neighbourIndex: %d, ", neighbourIndex)
-			unlinkedByLinkedNeighbours(t, g, neighbourIndex)
-			unlink(t, g, currIndex, neighbourIndex)
-			t.C[neighbourIndex].B = tgtBlock
-			trace.Push(neighbourIndex)
+		ok := false
+		for !ok {
 
-			reachable := reachableCells(g, index2id(currIndex))
-			fmt.Printf("reachable: %d, ", reachable)
-			if reachable == remain {
-				break
-			} else {
-				fmt.Printf("#Pop# ")
-				t.C[neighbourIndex].B = 0
+			currIndex := trace.Peek().(int)
+			fmt.Printf("\nremain: %v, currIndex: %v, ", remain, currIndex)
+
+			neighbours := targetNeighbours(t, g, currIndex)
+			fmt.Printf("neighbours: %v, ", neighbours)
+			neighbours = disorderDigits(neighbours)
+			fmt.Printf("neighbours: %v, ", neighbours)
+
+			for _, neighbour := range neighbours {
+				fmt.Printf("neighbour: %d, ", neighbour)
+				trace.Push(neighbour)
+				neighbourOfNeighbours = srcNeighbours(t, g, neighbour)
+				for _, neighneighbourOfNeighbour := range neighbourOfNeighbours {
+					unlink(g, index2id(neighneighbourOfNeighbour), index2id(neighbour))
+				}
+				t.C[neighbour].B = tgtBlock
+
+				// as the begin of dfs
+				var unblockedCellIndex int
+				for i := len(t.C) - 1; i >= 0; i-- {
+					if t.C[i].B == 0 {
+						unblockedCellIndex = i
+						break
+					}
+				}
+				visited := reachableCells(g, index2id(unblockedCellIndex))
+				fmt.Printf("From %d reachable: %d, ", unblockedCellIndex, visited)
+				if visited == remain-1 {
+					ok = true
+					break
+				} else {
+					fmt.Printf("!Pop!")
+					for _, neighneighbourOfNeighbour := range neighbourOfNeighbours {
+						link(g, index2id(neighneighbourOfNeighbour), index2id(neighbour))
+					}
+					t.C[neighbour].B = 0
+					trace.Pop()
+					continue
+				}
+			}
+			if !ok {
+				fmt.Printf("!!ok!\n")
 				trace.Pop()
-				linkedByLinkedNeighbours(t, g, neighbourIndex)
-				link(t, g, currIndex, neighbourIndex)
-				continue
 			}
 		}
 		remain--
 	}
+
+	fmt.Printf("\ntrace: %v\n", trace)
 }
 
 func reachableCells(g graph.Graph, id graph.Id) int {
@@ -169,6 +195,7 @@ func (t *TerminalJson) genPuzzle(minSubGiven int, minTotalGiven int) *TerminalJs
 	}
 
 	s := newSudoku(t)
+	rand.Seed(time.Now().Unix())
 	dd1 := disorderDigits(tmp1)
 
 	for dd1i := 0; dd1i < t.E; dd1i++ {

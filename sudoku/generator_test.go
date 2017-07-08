@@ -19,40 +19,209 @@ func Test_reachableCells(t *testing.T) {
 	terminal := NewTerminalJson(9)
 	g := newGraph(terminal)
 
+	var begin int
 	index := 0
-	fmt.Printf("Test_reachableCells %d: %d\n", index, reachableCells(g, index2id(index)))
 	neighbours := srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
 		unlink(g, index2id(neighbour), index2id(index))
 	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
 
 	index = 1
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
 		unlink(g, index2id(neighbour), index2id(index))
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", 0, reachableCells(g, index2id(0)))
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
 
 	index = 10
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
 		unlink(g, index2id(neighbour), index2id(index))
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", 1, reachableCells(g, index2id(1)))
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
 
 	index = 19
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
 		unlink(g, index2id(neighbour), index2id(index))
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", 10, reachableCells(g, index2id(10)))
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
 
 	index = 18
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
 		unlink(g, index2id(neighbour), index2id(index))
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", 19, reachableCells(g, index2id(19)))
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	for _, neighbour := range neighbours {
+		link(g, index2id(neighbour), index2id(index))
+	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+
+	index = 28
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+
+	index = 27
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	for _, neighbour := range neighbours {
+		link(g, index2id(neighbour), index2id(index))
+	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+
+	index = 37
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+
+	index = 38
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+
+	index = 29
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+
+	index = 20
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+
+	index = 2
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+
+	index = 11
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+
+	index = 12
+	neighbours = srcNeighbours(terminal, g, index)
+	for _, neighbour := range neighbours {
+		unlink(g, index2id(neighbour), index2id(index))
+	}
+	for i := len(terminal.C) - 1; i >= 0; i-- {
+		if terminal.C[i].B == 0 {
+			begin = i
+			break
+		}
+	}
+	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	// simulate 0 1 10 19 (18) 28 (27) 37 38 29 20, 2 11 12
 }
 
 func Test_digitsDisorder(t *testing.T) {
