@@ -31,7 +31,7 @@ func GenByte(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) [
 func genTerminal(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) *TerminalJson {
 	t := NewTerminalJson(edge).genBlock(mode)
 	t = t.genMaterial()
-	t = solve(t)
+	t = SolveTerminalJson(t)
 	t = t.genPuzzle(minSubGiven, minTotalGiven)
 	return t
 }
