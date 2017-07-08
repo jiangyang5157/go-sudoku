@@ -101,7 +101,7 @@ func (t *TerminalJson) Right(index int) int {
 	return ret
 }
 
-func (t *TerminalJson) neighbours(index int) []int {
+func (t *TerminalJson) Neighbours(index int) []int {
 	var ret []int
 	up, down, left, right := t.Up(index), t.Down(index), t.Left(index), t.Right(index)
 	if up != -1 {

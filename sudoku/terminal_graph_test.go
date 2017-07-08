@@ -22,10 +22,10 @@ func Test_dfs(t *testing.T) {
 func Test_targetNeighbours(t *testing.T) {
 	terminal := NewTerminalJson(9)
 	g := newGraph(terminal)
-	fmt.Printf("Test_targetNeighbours %d: %v\n", 0, targetNeighbours(terminal, g, 0))
-	fmt.Printf("Test_targetNeighbours %d: %v\n", 1, targetNeighbours(terminal, g, 1))
-	fmt.Printf("Test_targetNeighbours %d: %v\n", 17, targetNeighbours(terminal, g, 17))
-	fmt.Printf("Test_targetNeighbours %d: %v\n", 11, targetNeighbours(terminal, g, 11))
+	fmt.Printf("Test_targetNeighbours %d: %v\n", 0, tgtNeighbours(terminal, g, 0))
+	fmt.Printf("Test_targetNeighbours %d: %v\n", 1, tgtNeighbours(terminal, g, 1))
+	fmt.Printf("Test_targetNeighbours %d: %v\n", 17, tgtNeighbours(terminal, g, 17))
+	fmt.Printf("Test_targetNeighbours %d: %v\n", 11, tgtNeighbours(terminal, g, 11))
 }
 
 func Test_srcNeighbours(t *testing.T) {
@@ -42,8 +42,8 @@ func Test_link_unlink(t *testing.T) {
 	g := newGraph(terminal)
 	unlink(g, index2id(11), index2id(10))
 	fmt.Printf("Test_unlink %d-x->%d targetNeighbours/srcNeighbours of %d: %v / %v\n",
-		11, 10, 11, targetNeighbours(terminal, g, 11), srcNeighbours(terminal, g, 11))
+		11, 10, 11, tgtNeighbours(terminal, g, 11), srcNeighbours(terminal, g, 11))
 	link(g, index2id(11), index2id(10))
 	fmt.Printf("Test_link %d-x->%d targetNeighbours/srcNeighbours of %d: %v / %v\n",
-		11, 10, 11, targetNeighbours(terminal, g, 11), srcNeighbours(terminal, g, 11))
+		11, 10, 11, tgtNeighbours(terminal, g, 11), srcNeighbours(terminal, g, 11))
 }

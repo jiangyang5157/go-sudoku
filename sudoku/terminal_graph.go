@@ -56,7 +56,7 @@ func newGraph(t *TerminalJson) graph.Graph {
 				nd = newNode(index, &t.C[index])
 				g.AddNode(nd)
 			}
-			neighbours := t.neighbours(index)
+			neighbours := t.Neighbours(index)
 			for _, neighbour := range neighbours {
 				neighbourId := index2id(neighbour)
 				n, err := g.GetNode(neighbourId)
@@ -80,7 +80,7 @@ func unlink(g graph.Graph, srcId graph.Id, tgtId graph.Id) {
 	g.DeleteEdge(srcId, tgtId)
 }
 
-func targetNeighbours(t *TerminalJson, g graph.Graph, index int) []int {
+func tgtNeighbours(t *TerminalJson, g graph.Graph, index int) []int {
 	var ret []int
 	id := index2id(index)
 	targets, _ := g.GetTargets(id)

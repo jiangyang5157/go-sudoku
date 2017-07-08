@@ -15,7 +15,7 @@ func Test_genBlock(t *testing.T) {
 	fmt.Printf("Test_genBlock IRREGULAR:\n%v\n", NewTerminalJson(9).genBlock(IRREGULAR))
 }
 
-func Test_reachableCells(t *testing.T) {
+func Test_reachableNum(t *testing.T) {
 	terminal := NewTerminalJson(9)
 	g := newGraph(terminal)
 
@@ -31,7 +31,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 1
 	neighbours = srcNeighbours(terminal, g, index)
@@ -44,7 +44,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 10
 	neighbours = srcNeighbours(terminal, g, index)
@@ -57,7 +57,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 19
 	neighbours = srcNeighbours(terminal, g, index)
@@ -70,7 +70,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 18
 	neighbours = srcNeighbours(terminal, g, index)
@@ -83,7 +83,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 	for _, neighbour := range neighbours {
 		link(g, index2id(neighbour), index2id(index))
 	}
@@ -93,7 +93,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 28
 	neighbours = srcNeighbours(terminal, g, index)
@@ -106,7 +106,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 27
 	neighbours = srcNeighbours(terminal, g, index)
@@ -119,7 +119,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 	for _, neighbour := range neighbours {
 		link(g, index2id(neighbour), index2id(index))
 	}
@@ -129,7 +129,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 37
 	neighbours = srcNeighbours(terminal, g, index)
@@ -142,7 +142,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 38
 	neighbours = srcNeighbours(terminal, g, index)
@@ -155,7 +155,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 29
 	neighbours = srcNeighbours(terminal, g, index)
@@ -168,7 +168,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 20
 	neighbours = srcNeighbours(terminal, g, index)
@@ -181,7 +181,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 2
 	neighbours = srcNeighbours(terminal, g, index)
@@ -194,7 +194,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 11
 	neighbours = srcNeighbours(terminal, g, index)
@@ -207,7 +207,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 
 	index = 12
 	neighbours = srcNeighbours(terminal, g, index)
@@ -220,7 +220,7 @@ func Test_reachableCells(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableCells %d: %d\n", begin, reachableCells(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
 	// simulate 0 1 10 19 (18) 28 (27) 37 38 29 20, 2 11 12
 }
 
