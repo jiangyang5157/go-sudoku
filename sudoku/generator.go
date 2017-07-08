@@ -78,6 +78,7 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 				continue
 			}
 			genIrregularBlock(t, g, i, tgtBlock, trace)
+			fmt.Printf("trace: %v\n", trace)
 			tgtBlock--
 		}
 		return t
@@ -109,9 +110,7 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock in
 			currIndex := trace.Peek().(int)
 			fmt.Printf("\nremain: %v, currIndex: %v, ", remain, currIndex)
 
-			neighbours := targetNeighbours(t, g, currIndex)
-			fmt.Printf("neighbours: %v, ", neighbours)
-			neighbours = disorderDigits(neighbours)
+			neighbours := disorderDigits(targetNeighbours(t, g, currIndex))
 			fmt.Printf("neighbours: %v, ", neighbours)
 
 			for _, neighbour := range neighbours {
@@ -137,7 +136,7 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock in
 					ok = true
 					break
 				} else {
-					fmt.Printf("!Pop!")
+					fmt.Printf("!POP! ")
 					for _, neighneighbourOfNeighbour := range neighbourOfNeighbours {
 						link(g, index2id(neighneighbourOfNeighbour), index2id(neighbour))
 					}
@@ -147,14 +146,12 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock in
 				}
 			}
 			if !ok {
-				fmt.Printf("!!ok!\n")
+				fmt.Printf("!!OK! \n")
 				trace.Pop()
 			}
 		}
 		remain--
 	}
-
-	fmt.Printf("\ntrace: %v\n", trace)
 }
 
 func reachableCells(g graph.Graph, id graph.Id) int {
