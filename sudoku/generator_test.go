@@ -17,13 +17,13 @@ func Test_genBlock(t *testing.T) {
 
 func Test_reachableNum(t *testing.T) {
 	terminal := NewTerminalJson(9)
-	g := newGraph(terminal)
+	g := NewGraph(terminal)
 
 	var begin int
 	index := 0
 	neighbours := srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -31,12 +31,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 1
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -44,12 +44,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 10
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -57,12 +57,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 19
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -70,12 +70,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 18
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -83,9 +83,9 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 	for _, neighbour := range neighbours {
-		link(g, index2id(neighbour), index2id(index))
+		link(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -93,12 +93,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 28
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -106,12 +106,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 27
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -119,9 +119,9 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 	for _, neighbour := range neighbours {
-		link(g, index2id(neighbour), index2id(index))
+		link(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -129,12 +129,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 37
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -142,12 +142,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 38
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -155,12 +155,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 29
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -168,12 +168,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 20
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -181,12 +181,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 2
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -194,12 +194,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 11
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -207,12 +207,12 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 
 	index = 12
 	neighbours = srcNeighbours(terminal, g, index)
 	for _, neighbour := range neighbours {
-		unlink(g, index2id(neighbour), index2id(index))
+		unlink(g, Index2Id(neighbour), Index2Id(index))
 	}
 	for i := len(terminal.C) - 1; i >= 0; i-- {
 		if terminal.C[i].B == 0 {
@@ -220,7 +220,7 @@ func Test_reachableNum(t *testing.T) {
 			break
 		}
 	}
-	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, index2id(begin)))
+	fmt.Printf("Test_reachableNum %d: %d\n", begin, reachableNum(g, Index2Id(begin)))
 	// simulate 0 1 10 19 (18) 28 (27) 37 38 29 20, 2 11 12
 }
 

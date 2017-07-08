@@ -63,34 +63,34 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 		}
 		return t
 	case IRREGULAR:
-		var tCopy *TerminalJson
 		rand.Seed(time.Now().Unix())
+		var retsult *TerminalJson
 		ok := false
 		for !ok {
-			tCopy = t.Clone()
-			b := tCopy.E - 1
-			g := newGraph(tCopy)
-			// up-to-down, left-to-right
-			for i := 0; i < len(tCopy.C); i++ {
+			retsult = t.Clone()
+			b := retsult.E - 1
+			g := NewGraph(retsult)
+			// up-to-down and left-to-right
+			for i := 0; i < len(retsult.C); i++ {
 				if b == 0 {
 					// rest of cells belongs to block 0
+					ok = true
 					break
 				}
-				if tCopy.C[i].B > 0 {
+				if retsult.C[i].B > 0 {
 					// already be assigned to a particular block
 					continue
 				}
-				if genIrregularBlock(tCopy, g, b, i) {
+				if genIrregularBlock(retsult, g, b, i) {
 					b--
 				} else {
+					// retry
+					ok = false
 					break
 				}
 			}
-			if b == 0 {
-				ok = true
-			}
 		}
-		return tCopy
+		return retsult
 	default:
 		return nil
 	}
@@ -100,37 +100,34 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) boo
 	remain := len(t.C) - (t.E-1-block)*t.E
 	tgtRemain := remain - t.E
 
+	// C[begin] is valid to be the first one of target block.
 	trace := stack.NewStack()
 	nbsOfBegin := srcNeighbours(t, g, begin)
 	for _, nb := range nbsOfBegin {
-		unlink(g, index2id(nb), index2id(begin))
+		unlink(g, Index2Id(nb), Index2Id(begin))
 	}
 	trace.Push(begin)
 	t.C[begin].B = block
 	remain--
 
-	var undo []int
 	for remain > tgtRemain {
-		if trace.IsEmpty() {
-			break
-		}
 		ok := false
 		for !ok {
 			if trace.IsEmpty() {
 				break
 			}
-
 			index := trace.Peek().(int)
 			nbs := disorderDigits(tgtNeighbours(t, g, index))
 
 			for _, nb := range nbs {
 				trace.Push(nb)
+				t.C[nb].B = block
 				nbsOfNbs := srcNeighbours(t, g, nb)
 				for _, nbOfNbs := range nbsOfNbs {
-					unlink(g, index2id(nbOfNbs), index2id(nb))
+					unlink(g, Index2Id(nbOfNbs), Index2Id(nb))
 				}
-				t.C[nb].B = block
 
+				// dow-to-up and right-to-left
 				var indexOfAnyBlock0 int
 				for i := len(t.C) - 1; i >= 0; i-- {
 					if t.C[i].B == 0 {
@@ -138,45 +135,26 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) boo
 						break
 					}
 				}
-				visited := reachableNum(g, index2id(indexOfAnyBlock0))
 
+				visited := reachableNum(g, Index2Id(indexOfAnyBlock0))
 				if visited == remain-1 {
 					ok = true
 					break
 				} else {
 					for _, nbOfNbs := range nbsOfNbs {
-						link(g, index2id(nbOfNbs), index2id(nb))
+						link(g, Index2Id(nbOfNbs), Index2Id(nb))
 					}
 					t.C[nb].B = 0
 					trace.Pop()
 				}
 			}
 			if !ok {
-				undo = append(undo, trace.Pop().(int))
+				trace.Pop()
 			}
 		}
 		remain--
 	}
-
-	ret := !trace.IsEmpty()
-	if !ret {
-		for _, v := range undo {
-			nbs := t.Neighbours(v)
-			for _, v2 := range nbs {
-				if t.C[v2].B == block || t.C[v2].B == 0 {
-					link(g, index2id(v), index2id(v2))
-					link(g, index2id(v2), index2id(v))
-				}
-			}
-		}
-
-		for _, nb := range nbsOfBegin {
-			link(g, index2id(nb), index2id(begin))
-		}
-		t.C[begin].B = 0
-	}
-
-	return ret
+	return !trace.IsEmpty()
 }
 
 func reachableNum(g graph.Graph, id graph.Id) int {

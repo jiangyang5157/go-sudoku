@@ -22,35 +22,28 @@ func (nd *node) String() string {
 }
 
 func (nd *node) Id() graph.Id {
-	return index2id(nd.index)
+	return Index2Id(nd.index)
 }
 
 func (nd *node) Cell() *Cell {
 	return nd.c
 }
 
-func index2id(index int) graph.Id {
+func Index2Id(index int) graph.Id {
 	return graph.Id(strconv.Itoa(index))
 }
 
-func id2index(id graph.Id) int {
+func Id2Index(id graph.Id) int {
 	ret, _ := strconv.Atoi(string(id))
 	return ret
 }
 
-func newNode(index int, c *Cell) Node {
-	return &node{
-		index: index,
-		c:     c,
-	}
-}
-
-func newGraph(t *TerminalJson) graph.Graph {
+func NewGraph(t *TerminalJson) graph.Graph {
 	g := graph.NewGraph()
 	index := 0
 	for i := 0; i < t.E; i++ {
 		for j := 0; j < t.E; j++ {
-			indexId := index2id(index)
+			indexId := Index2Id(index)
 			nd, err := g.GetNode(indexId)
 			if err != nil {
 				nd = newNode(index, &t.C[index])
@@ -58,7 +51,7 @@ func newGraph(t *TerminalJson) graph.Graph {
 			}
 			neighbours := t.Neighbours(index)
 			for _, neighbour := range neighbours {
-				neighbourId := index2id(neighbour)
+				neighbourId := Index2Id(neighbour)
 				n, err := g.GetNode(neighbourId)
 				if err != nil {
 					n = newNode(neighbour, &t.C[neighbour])
@@ -72,6 +65,13 @@ func newGraph(t *TerminalJson) graph.Graph {
 	return g
 }
 
+func newNode(index int, c *Cell) Node {
+	return &node{
+		index: index,
+		c:     c,
+	}
+}
+
 func link(g graph.Graph, srcId graph.Id, tgtId graph.Id) {
 	g.AddEdge(srcId, tgtId, graph.NewEdge(0))
 }
@@ -82,20 +82,20 @@ func unlink(g graph.Graph, srcId graph.Id, tgtId graph.Id) {
 
 func tgtNeighbours(t *TerminalJson, g graph.Graph, index int) []int {
 	var ret []int
-	id := index2id(index)
+	id := Index2Id(index)
 	targets, _ := g.GetTargets(id)
 	if targets != nil {
 		up, down, left, right := t.Up(index), t.Down(index), t.Left(index), t.Right(index)
-		if up != -1 && targets[index2id(up)] != nil {
+		if up != -1 && targets[Index2Id(up)] != nil {
 			ret = append(ret, up)
 		}
-		if down != -1 && targets[index2id(down)] != nil {
+		if down != -1 && targets[Index2Id(down)] != nil {
 			ret = append(ret, down)
 		}
-		if left != -1 && targets[index2id(left)] != nil {
+		if left != -1 && targets[Index2Id(left)] != nil {
 			ret = append(ret, left)
 		}
-		if right != -1 && targets[index2id(right)] != nil {
+		if right != -1 && targets[Index2Id(right)] != nil {
 			ret = append(ret, right)
 		}
 	}
@@ -104,20 +104,20 @@ func tgtNeighbours(t *TerminalJson, g graph.Graph, index int) []int {
 
 func srcNeighbours(t *TerminalJson, g graph.Graph, index int) []int {
 	var ret []int
-	id := index2id(index)
+	id := Index2Id(index)
 	srcs, _ := g.GetSources(id)
 	if srcs != nil {
 		up, down, left, right := t.Up(index), t.Down(index), t.Left(index), t.Right(index)
-		if up != -1 && srcs[index2id(up)] != nil {
+		if up != -1 && srcs[Index2Id(up)] != nil {
 			ret = append(ret, up)
 		}
-		if down != -1 && srcs[index2id(down)] != nil {
+		if down != -1 && srcs[Index2Id(down)] != nil {
 			ret = append(ret, down)
 		}
-		if left != -1 && srcs[index2id(left)] != nil {
+		if left != -1 && srcs[Index2Id(left)] != nil {
 			ret = append(ret, left)
 		}
-		if right != -1 && srcs[index2id(right)] != nil {
+		if right != -1 && srcs[Index2Id(right)] != nil {
 			ret = append(ret, right)
 		}
 	}

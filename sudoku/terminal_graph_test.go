@@ -10,9 +10,9 @@ import (
 
 func Test_dfs(t *testing.T) {
 	terminal := NewTerminalJson(9)
-	g := newGraph(terminal)
+	g := NewGraph(terminal)
 	visited := 0
-	traversal.Dfs(g, index2id(2), func(nd graph.Node) bool {
+	traversal.Dfs(g, Index2Id(2), func(nd graph.Node) bool {
 		visited++
 		return false
 	})
@@ -21,7 +21,7 @@ func Test_dfs(t *testing.T) {
 
 func Test_targetNeighbours(t *testing.T) {
 	terminal := NewTerminalJson(9)
-	g := newGraph(terminal)
+	g := NewGraph(terminal)
 	fmt.Printf("Test_targetNeighbours %d: %v\n", 0, tgtNeighbours(terminal, g, 0))
 	fmt.Printf("Test_targetNeighbours %d: %v\n", 1, tgtNeighbours(terminal, g, 1))
 	fmt.Printf("Test_targetNeighbours %d: %v\n", 17, tgtNeighbours(terminal, g, 17))
@@ -30,7 +30,7 @@ func Test_targetNeighbours(t *testing.T) {
 
 func Test_srcNeighbours(t *testing.T) {
 	terminal := NewTerminalJson(9)
-	g := newGraph(terminal)
+	g := NewGraph(terminal)
 	fmt.Printf("Test_srcNeighbours %d: %v\n", 0, srcNeighbours(terminal, g, 0))
 	fmt.Printf("Test_srcNeighbours %d: %v\n", 1, srcNeighbours(terminal, g, 1))
 	fmt.Printf("Test_srcNeighbours %d: %v\n", 17, srcNeighbours(terminal, g, 17))
@@ -39,11 +39,11 @@ func Test_srcNeighbours(t *testing.T) {
 
 func Test_link_unlink(t *testing.T) {
 	terminal := NewTerminalJson(9)
-	g := newGraph(terminal)
-	unlink(g, index2id(11), index2id(10))
+	g := NewGraph(terminal)
+	unlink(g, Index2Id(11), Index2Id(10))
 	fmt.Printf("Test_unlink %d-x->%d targetNeighbours/srcNeighbours of %d: %v / %v\n",
 		11, 10, 11, tgtNeighbours(terminal, g, 11), srcNeighbours(terminal, g, 11))
-	link(g, index2id(11), index2id(10))
+	link(g, Index2Id(11), Index2Id(10))
 	fmt.Printf("Test_link %d-x->%d targetNeighbours/srcNeighbours of %d: %v / %v\n",
 		11, 10, 11, tgtNeighbours(terminal, g, 11), srcNeighbours(terminal, g, 11))
 }
