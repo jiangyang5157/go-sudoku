@@ -1,12 +1,14 @@
 package sudoku
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
 
 	"github.com/jiangyang5157/go-graph/graph"
 	"github.com/jiangyang5157/go-graph/graph/traversal"
+	"github.com/jiangyang5157/golang-start/data/stack"
 )
 
 type GeneratorMode int
@@ -62,124 +64,115 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 		}
 		return t
 	case IRREGULAR:
-		// g := newGraph(t)
-		// tgtBlock := t.E - 1
-		// // gen block follow up-to-down and left-to-right order
-		// trace := stack.NewStack()
-		// for i := 0; i < len(t.C); i++ {
-		// 	if tgtBlock <= 0 {
-		// 		// rest of cells belongs to block 0
-		// 		break
-		// 	}
-		// 	if t.C[i].B > 0 {
-		// 		// already be assigned to a particular block
-		// 		continue
-		// 	}
-		// 	genIrregularBlock(t, g, i, tgtBlock, trace)
-		// 	fmt.Printf("trace: %v\n", trace)
-		// 	tgtBlock--
-		// }
-		//----
-		// rand.Seed(time.Now().Unix())
-		// tmp := disorderDigits(increasingDigits(0, len(t.C)-1))
-		// todo := make(map[int]bool, len(tmp))
-		// for _, index := range tmp {
-		// 	todo[index] = true
-		// }
-		// g := newGraph(t)
-		// b := t.E - 1
-		// for b > 0 {
-		// 	for k, v := range todo {
-		// 		if !v {
-		// 			continue
-		// 		}
-		//
-		// 		result := markIrregularBlock(t, g, k, b)
-		// 		if len(result) != t.E {
-		// 			continue
-		// 		}
-		//
-		// 		for ret := range result {
-		// 			todo[ret] = false
-		// 		}
-		//
-		// 		break
-		// 	}
-		// 	b--
-		// }
-		//====
+		g := newGraph(t)
+		b := t.E - 1
+		test := 1
+		for b != 0 && test < 5 {
+			test++
+			// up-to-down, left-to-right
+			for i := 0; i < len(t.C); i++ {
+				if b == 0 {
+					// rest of cells belongs to block 0
+					break
+				}
+				if t.C[i].B > 0 {
+					// already be assigned to a particular block
+					continue
+				}
+				if genIrregularBlock(t, g, b, i) {
+					b--
+				}
+			}
+		}
+		fmt.Printf("test: %d\n", test)
 		return t
 	default:
 		return nil
 	}
 }
 
-// func genIrregularBlock(t *TerminalJson, g graph.Graph, srcIndex int, tgtBlock int, trace *stack.Stack) {
-// 	remain := len(t.C) - (t.E-1-tgtBlock)*t.E
-// 	tgtRemain := remain - t.E
-// 	fmt.Printf("\ntgtBlock: %d, remain: %d, tgtRemain: %d\n", tgtBlock, remain, tgtRemain)
-//
-// 	// Because of the up-to-down and left-to-right order,
-// 	// C[src] is valid to be the first one of target block.
-// 	trace.Push(srcIndex)
-// 	neighbourOfNeighbours := srcNeighbours(t, g, srcIndex)
-// 	for _, neighbour := range neighbourOfNeighbours {
-// 		unlink(g, index2id(neighbour), index2id(srcIndex))
-// 	}
-// 	t.C[srcIndex].B = tgtBlock
-// 	remain--
-//
-// 	rand.Seed(time.Now().Unix())
-// 	for remain > tgtRemain {
-// 		ok := false
-// 		for !ok {
-//
-// 			currIndex := trace.Peek().(int)
-// 			fmt.Printf("\nremain: %v, currIndex: %v, ", remain, currIndex)
-//
-// 			neighbours := disorderDigits(tgtNeighbours(t, g, currIndex))
-// 			fmt.Printf("neighbours: %v, ", neighbours)
-//
-// 			for _, neighbour := range neighbours {
-// 				fmt.Printf("neighbour: %d, ", neighbour)
-// 				trace.Push(neighbour)
-// 				neighbourOfNeighbours = srcNeighbours(t, g, neighbour)
-// 				for _, neighneighbourOfNeighbour := range neighbourOfNeighbours {
-// 					unlink(g, index2id(neighneighbourOfNeighbour), index2id(neighbour))
-// 				}
-// 				t.C[neighbour].B = tgtBlock
-//
-// 				// as the begin of dfs
-// 				var unblockedCellIndex int
-// 				for i := len(t.C) - 1; i >= 0; i-- {
-// 					if t.C[i].B == 0 {
-// 						unblockedCellIndex = i
-// 						break
-// 					}
-// 				}
-// 				visited := reachableNum(g, index2id(unblockedCellIndex))
-// 				fmt.Printf("From %d reachableNum: %d, ", unblockedCellIndex, visited)
-// 				if visited == remain-1 {
-// 					ok = true
-// 					break
-// 				} else {
-// 					fmt.Printf("!POP! ")
-// 					for _, neighneighbourOfNeighbour := range neighbourOfNeighbours {
-// 						link(g, index2id(neighneighbourOfNeighbour), index2id(neighbour))
-// 					}
-// 					t.C[neighbour].B = 0
-// 					trace.Pop()
-// 					continue
-// 				}
-// 			}
-// 			if !ok {
-// 				fmt.Printf("!!OK! \n")
-// 				trace.Pop()
-// 			}
-// 		}
-// 		remain--
-// 	}
-// }
+//----
+func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) bool {
+	remain := len(t.C) - (t.E-1-block)*t.E
+	tgtRemain := remain - t.E
+	fmt.Printf("######## block=%d, begin=%d, remain=%d, tgtRemain=%d\n", block, begin, remain, tgtRemain)
+
+	// Because of the up-to-down and left-to-right order,
+	// C[begin] is valid to be the first one of target block.
+	trace := stack.NewStack()
+	nbsOfBegin := srcNeighbours(t, g, begin)
+	for _, nb := range nbsOfBegin {
+		unlink(g, index2id(nb), index2id(begin))
+	}
+	trace.Push(begin)
+	t.C[begin].B = block
+	remain--
+
+	rand.Seed(time.Now().Unix())
+	for remain > tgtRemain {
+		if trace.IsEmpty() {
+			break
+		}
+		ok := false
+		for !ok {
+			if trace.IsEmpty() {
+				break
+			}
+			index := trace.Peek().(int)
+			nbs := disorderDigits(tgtNeighbours(t, g, index))
+			fmt.Printf("remain=%d, index=%d, nbs=%v, ", remain, index, nbs)
+
+			for _, nb := range nbs {
+				fmt.Printf("nb: %d, ", nb)
+
+				trace.Push(nb)
+				nbsOfNbs := srcNeighbours(t, g, nb)
+				for _, nbOfNbs := range nbsOfNbs {
+					unlink(g, index2id(nbOfNbs), index2id(nb))
+				}
+				t.C[nb].B = block
+
+				// as the begin of dfs
+				var indexOfAnyBlock0 int
+				for i := len(t.C) - 1; i >= 0; i-- {
+					if t.C[i].B == 0 {
+						indexOfAnyBlock0 = i
+						break
+					}
+				}
+				visited := reachableNum(g, index2id(indexOfAnyBlock0))
+				fmt.Printf("%d reaches %d\n", indexOfAnyBlock0, visited)
+
+				if visited == remain-1 {
+					ok = true
+					break
+				} else {
+					fmt.Printf("!POP!\n")
+					for _, nbOfNbs := range nbsOfNbs {
+						link(g, index2id(nbOfNbs), index2id(nb))
+					}
+					t.C[nb].B = 0
+					trace.Pop()
+				}
+			}
+			if !ok {
+				trace.Pop()
+			}
+		}
+		remain--
+	}
+
+	ret := !trace.IsEmpty()
+	if !ret {
+		fmt.Printf("################!!!!!!!!!!!!!!!!################ !POP begin!\n")
+		for _, nb := range nbsOfBegin {
+			link(g, index2id(nb), index2id(begin))
+		}
+		t.C[begin].B = 0
+	}
+
+	return ret
+}
 
 func reachableNum(g graph.Graph, id graph.Id) int {
 	visited := 0
