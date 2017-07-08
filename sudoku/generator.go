@@ -63,41 +63,34 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 		}
 		return t
 	case IRREGULAR:
-		// TODO temp alg
-		g := newGraph(t)
-		b := t.E - 1
-		tempMaxRun := 0
-		for b > 0 && tempMaxRun <= 2 {
-			tempMaxRun++
+		var tCopy *TerminalJson
+		rand.Seed(time.Now().Unix())
+		ok := false
+		for !ok {
+			tCopy = t.Clone()
+			b := tCopy.E - 1
+			g := newGraph(tCopy)
 			// up-to-down, left-to-right
-			for i := 0; i < len(t.C); i++ {
+			for i := 0; i < len(tCopy.C); i++ {
 				if b == 0 {
 					// rest of cells belongs to block 0
 					break
 				}
-				if t.C[i].B > 0 {
+				if tCopy.C[i].B > 0 {
 					// already be assigned to a particular block
 					continue
 				}
-				if genIrregularBlock(t, g, b, i) {
+				if genIrregularBlock(tCopy, g, b, i) {
 					b--
-				}
-			}
-		}
-		if b > 0 {
-			count := 0
-			for i := 0; i < len(t.C); i++ {
-				if b == 0 {
+				} else {
 					break
 				}
-				t.C[i].B = b
-				count++
-				if count == t.E {
-					b--
-				}
+			}
+			if b == 0 {
+				ok = true
 			}
 		}
-		return t
+		return tCopy
 	default:
 		return nil
 	}
@@ -107,8 +100,6 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) boo
 	remain := len(t.C) - (t.E-1-block)*t.E
 	tgtRemain := remain - t.E
 
-	// Because of the up-to-down and left-to-right order,
-	// C[begin] is valid to be the first one of target block.
 	trace := stack.NewStack()
 	nbsOfBegin := srcNeighbours(t, g, begin)
 	for _, nb := range nbsOfBegin {
@@ -119,7 +110,6 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) boo
 	remain--
 
 	var undo []int
-	rand.Seed(time.Now().Unix())
 	for remain > tgtRemain {
 		if trace.IsEmpty() {
 			break
@@ -141,7 +131,6 @@ func genIrregularBlock(t *TerminalJson, g graph.Graph, block int, begin int) boo
 				}
 				t.C[nb].B = block
 
-				// as the begin of dfs
 				var indexOfAnyBlock0 int
 				for i := len(t.C) - 1; i >= 0; i-- {
 					if t.C[i].B == 0 {
@@ -230,7 +219,6 @@ func (t *TerminalJson) genPuzzle(minSubGiven int, minTotalGiven int) *TerminalJs
 	s := newSudoku(t)
 	rand.Seed(time.Now().Unix())
 	dd1 := disorderDigits(tmp1)
-
 	for dd1i := 0; dd1i < t.E; dd1i++ {
 		row := dd1[dd1i]
 		dd2 := disorderDigits(tmp2)
