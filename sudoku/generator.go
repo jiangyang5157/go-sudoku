@@ -14,7 +14,7 @@ type GeneratorMode int
 
 const (
 	SQUARE    GeneratorMode = iota
-	IRREGULAR               // TODO NOT READY: genMaterial
+	IRREGULAR               // TODO NOT READY: genMaterial(); INEFFICIENCT genBlock()
 )
 
 func GenString(edge int, mode int, minSubGiven int, minTotalGiven int) string {
@@ -29,8 +29,8 @@ func GenByte(edge int, mode int, minSubGiven int, minTotalGiven int) []byte {
 }
 
 func GenTerminal(edge int, mode GeneratorMode) *TerminalJson {
-	var ret *TerminalJson
 	t := NewTerminalJson(edge).genBlock(mode)
+	var ret *TerminalJson
 	ok := false
 	for !ok {
 		ret = SolveTerminalJson(t.Clone().genMaterial(mode))
