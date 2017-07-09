@@ -18,17 +18,17 @@ const (
 	IRREGULAR
 )
 
-func GenString(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) string {
+func GenString(edge int, mode int, minSubGiven int, minTotalGiven int) string {
 	return string(GenByte(edge, mode, minSubGiven, minTotalGiven))
 }
 
-func GenByte(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) []byte {
-	t := genTerminal(edge, mode, minSubGiven, minTotalGiven)
+func GenByte(edge int, mode int, minSubGiven int, minTotalGiven int) []byte {
+	t := GenTerminal(edge, GeneratorMode(mode), minSubGiven, minTotalGiven)
 	ret, _ := TerminalJson2Raw(t)
 	return ret
 }
 
-func genTerminal(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) *TerminalJson {
+func GenTerminal(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) *TerminalJson {
 	t := NewTerminalJson(edge).genBlock(mode)
 	t = t.genMaterial()
 	t = SolveTerminalJson(t)

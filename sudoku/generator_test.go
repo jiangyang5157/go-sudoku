@@ -15,6 +15,12 @@ func Test_genBlock(t *testing.T) {
 	fmt.Printf("Test_genBlock IRREGULAR:\n%v\n", NewTerminalJson(9).genBlock(IRREGULAR))
 }
 
+func Test_GenTerminal(t *testing.T) {
+	fmt.Printf("Test_GenTerminal:\n%v\n", GenTerminal(9, SQUARE, 5, 55))
+	// fmt.Printf("Test_GenTerminal:\n%v\n", GenTerminal(9, RANDOM, 5, 55))
+	// fmt.Printf("Test_GenTerminal:\n%v\n", GenTerminal(9, IRREGULAR, 5, 55))
+}
+
 func Test_reachableNum(t *testing.T) {
 	terminal := NewTerminalJson(9)
 	g := NewGraph(terminal)
