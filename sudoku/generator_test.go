@@ -21,6 +21,10 @@ func Test_GenTerminal(t *testing.T) {
 	// fmt.Printf("Test_GenTerminal:\n%v\n", GenTerminal(9, IRREGULAR, 5, 55))
 }
 
+func Test_GenString(t *testing.T) {
+	fmt.Printf("Test_GenString:\n%v\n", GenString(9, int(SQUARE), 5, 55))
+}
+
 func Test_reachableNum(t *testing.T) {
 	terminal := NewTerminalJson(9)
 	g := NewGraph(terminal)

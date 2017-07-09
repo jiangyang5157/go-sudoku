@@ -12,13 +12,11 @@ B: Block that the Cell belongs to
 D: Digit that the Cell hold
 */
 type TerminalJson struct {
-	fmt.Stringer
 	E int    `json:"E"`
 	C []Cell `json:"C"`
 }
 
 type Cell struct {
-	fmt.Stringer
 	B int `json:"B"`
 	D int `json:"D"`
 }
