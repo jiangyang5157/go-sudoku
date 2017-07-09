@@ -5,3 +5,6 @@
 
 #### Mobile
 The [Go mobile](https://github.com/golang/go/wiki/Mobile) subrepository adds support for mobile platforms (Android and iOS).
+
+###### Android
+`$ gomobile bind -target=android github.com/jiangyang5157/go-sudoku/sudoku`
