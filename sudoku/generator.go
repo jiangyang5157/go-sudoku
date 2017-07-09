@@ -13,9 +13,8 @@ import (
 type GeneratorMode int
 
 const (
-	SQUARE GeneratorMode = iota
-	RANDOM
-	IRREGULAR
+	SQUARE    GeneratorMode = iota
+	IRREGULAR               // TODO NOT READY: genMaterial
 )
 
 func GenString(edge int, mode int, minSubGiven int, minTotalGiven int) string {
@@ -23,17 +22,23 @@ func GenString(edge int, mode int, minSubGiven int, minTotalGiven int) string {
 }
 
 func GenByte(edge int, mode int, minSubGiven int, minTotalGiven int) []byte {
-	t := GenTerminal(edge, GeneratorMode(mode), minSubGiven, minTotalGiven)
+	t := GenTerminal(edge, GeneratorMode(mode))
+	t = t.genPuzzle(minSubGiven, minTotalGiven)
 	ret, _ := TerminalJson2Raw(t)
 	return ret
 }
 
-func GenTerminal(edge int, mode GeneratorMode, minSubGiven int, minTotalGiven int) *TerminalJson {
+func GenTerminal(edge int, mode GeneratorMode) *TerminalJson {
+	var ret *TerminalJson
 	t := NewTerminalJson(edge).genBlock(mode)
-	t = t.genMaterial()
-	t = SolveTerminalJson(t)
-	t = t.genPuzzle(minSubGiven, minTotalGiven)
-	return t
+	ok := false
+	for !ok {
+		ret = SolveTerminalJson(t.Clone().genMaterial(mode))
+		if ret != nil {
+			ok = true
+		}
+	}
+	return ret
 }
 
 func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
@@ -46,42 +51,26 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 			c.B = (row/square)*square + col/square
 		}
 		return t
-	case RANDOM:
-		rand.Seed(time.Now().Unix())
-		tmp := disorderDigits(increasingDigits(0, len(t.C)-1))
-		b := t.E - 1
-		index := 0
-		for i := 0; i < t.E; i++ {
-			if b < 1 {
-				break
-			}
-			for j := 0; j < t.E; j++ {
-				t.C[tmp[index]].B = b
-				index++
-			}
-			b--
-		}
-		return t
 	case IRREGULAR:
 		rand.Seed(time.Now().Unix())
-		var retsult *TerminalJson
+		var ret *TerminalJson
 		ok := false
 		for !ok {
-			retsult = t.Clone()
-			b := retsult.E - 1
-			g := NewGraph(retsult)
+			ret = t.Clone()
+			b := ret.E - 1
+			g := NewGraph(ret)
 			// up-to-down and left-to-right
-			for i := 0; i < len(retsult.C); i++ {
+			for i := 0; i < len(ret.C); i++ {
 				if b == 0 {
 					// rest of cells belongs to block 0
 					ok = true
 					break
 				}
-				if retsult.C[i].B > 0 {
+				if ret.C[i].B > 0 {
 					// already be assigned to a particular block
 					continue
 				}
-				if genIrregularBlock(retsult, g, b, i) {
+				if genIrregularBlock(ret, g, b, i) {
 					b--
 				} else {
 					// retry
@@ -90,7 +79,7 @@ func (t *TerminalJson) genBlock(mode GeneratorMode) *TerminalJson {
 				}
 			}
 		}
-		return retsult
+		return ret
 	default:
 		return nil
 	}
@@ -166,19 +155,27 @@ func reachableNum(g graph.Graph, id graph.Id) int {
 	return visited
 }
 
-// Fill diagonal square by random digits, returns the Terminal which should have solution
-func (t *TerminalJson) genMaterial() *TerminalJson {
-	tmp := increasingDigits(1, t.E)
-	square := int(math.Sqrt(float64(t.E)))
-	for i := 0; i < t.E; i += square + 1 {
-		digits := disorderDigits(tmp)
-		for j := 0; j < t.E; j++ {
-			row := j/square + (i/square)*square
-			col := j%square + (i/square)*square
-			t.Cell(row, col).D = digits[j]
+func (t *TerminalJson) genMaterial(mode GeneratorMode) *TerminalJson {
+	switch mode {
+	case SQUARE:
+		// Fill diagonal square by random digits, returns the Terminal which should have solution
+		tmp := increasingDigits(1, t.E)
+		square := int(math.Sqrt(float64(t.E)))
+		for i := 0; i < t.E; i += square + 1 {
+			digits := disorderDigits(tmp)
+			for j := 0; j < t.E; j++ {
+				row := j/square + (i/square)*square
+				col := j%square + (i/square)*square
+				t.Cell(row, col).D = digits[j]
+			}
 		}
+		return t
+	case IRREGULAR:
+		// TODO
+		return t
+	default:
+		return nil
 	}
-	return t
 }
 
 func (t *TerminalJson) genPuzzle(minSubGiven int, minTotalGiven int) *TerminalJson {

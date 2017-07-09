@@ -5,24 +5,19 @@ import (
 	"testing"
 )
 
-func Test_genMaterial(t *testing.T) {
-	fmt.Printf("Test_genMaterial:\n%v\n", NewTerminalJson(9).genMaterial())
-}
-
 func Test_genBlock(t *testing.T) {
 	fmt.Printf("Test_genBlock SQUARE:\n%v\n", NewTerminalJson(9).genBlock(SQUARE))
-	fmt.Printf("Test_genBlock RAMDOM:\n%v\n", NewTerminalJson(9).genBlock(RANDOM))
 	fmt.Printf("Test_genBlock IRREGULAR:\n%v\n", NewTerminalJson(9).genBlock(IRREGULAR))
 }
 
-func Test_GenTerminal(t *testing.T) {
-	fmt.Printf("Test_GenTerminal:\n%v\n", GenTerminal(9, SQUARE, 5, 55))
-	// fmt.Printf("Test_GenTerminal:\n%v\n", GenTerminal(9, RANDOM, 5, 55))
-	// fmt.Printf("Test_GenTerminal:\n%v\n", GenTerminal(9, IRREGULAR, 5, 55))
+func Test_GenTerminal_genPuzzle(t *testing.T) {
+	tSQUARE := GenTerminal(9, SQUARE)
+	fmt.Printf("Test_GenTerminal SQUARE:\n%v\n", tSQUARE)
+	fmt.Printf("Test_genPuzzle SQUARE:\n%v\n", tSQUARE.genPuzzle(5, 55))
 }
 
 func Test_GenString(t *testing.T) {
-	fmt.Printf("Test_GenString:\n%v\n", GenString(9, int(SQUARE), 5, 55))
+	fmt.Printf("Test_GenString SQUARE:\n%v\n", GenString(9, 0, 5, 55))
 }
 
 func Test_reachableNum(t *testing.T) {
