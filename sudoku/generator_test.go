@@ -7,7 +7,6 @@ import (
 
 func Test_genBlock(t *testing.T) {
 	fmt.Printf("Test_genBlock SQUARE:\n%v\n", NewTerminalJson(9).genBlock(SQUARE))
-	fmt.Printf("Test_genBlock IRREGULAR:\n%v\n", NewTerminalJson(9).genBlock(IRREGULAR))
 }
 
 func Test_GenTerminal_genPuzzle(t *testing.T) {
