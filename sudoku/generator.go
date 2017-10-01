@@ -6,27 +6,34 @@ import (
 	"time"
 )
 
-func GenString(edge int, minSubGiven int, minTotalGiven int) string {
-	return string(GenByte(edge, minSubGiven, minTotalGiven))
+type BlockMode int
+
+const (
+	SQUARE BlockMode = iota
+	IRREGULAR
+)
+
+func GenString(blockMode int, edge int, minSubGiven int, minTotalGiven int) string {
+	return string(GenByte(blockMode, edge, minSubGiven, minTotalGiven))
 }
 
-func GenByte(edge int, minSubGiven int, minTotalGiven int) []byte {
-	t := GenTerminalJson(edge, minSubGiven, minTotalGiven)
+func GenByte(blockMode int, edge int, minSubGiven int, minTotalGiven int) []byte {
+	t := GenTerminalJson(blockMode, edge, minSubGiven, minTotalGiven)
 	ret, _ := TerminalJson2Raw(t)
 	return ret
 }
 
-func GenTerminalJson(edge int, minSubGiven int, minTotalGiven int) *TerminalJson {
+func GenTerminalJson(blockMode int, edge int, minSubGiven int, minTotalGiven int) *TerminalJson {
 	rand.Seed(time.Now().Unix())
 
 	t := NewTerminalJson(edge)
-	t = t.genBlock()
+	t = t.genBlock(blockMode)
 
 	var ret *TerminalJson
 	ok := false
 	for !ok {
 		ret = t.Clone()
-		ret = ret.genMaterial()
+		ret = ret.genMaterial(blockMode)
 		// valid material must have at least one solution
 		ret = SolveTerminalJson(ret)
 		if ret != nil {
@@ -38,30 +45,49 @@ func GenTerminalJson(edge int, minSubGiven int, minTotalGiven int) *TerminalJson
 	return ret
 }
 
-// by square
-func (t *TerminalJson) genBlock() *TerminalJson {
+func (t *TerminalJson) genBlock(blockMode int) *TerminalJson {
+	// Gen diagonal square
 	square := int(math.Sqrt(float64(t.E)))
 	for i := 0; i < len(t.C); i++ {
 		c := &t.C[i]
 		row, col := t.Row(i), t.Col(i)
 		c.B = (row/square)*square + col/square
 	}
-	return t
+
+	mode := BlockMode(blockMode)
+	switch mode {
+	case SQUARE:
+		return t
+	case IRREGULAR:
+		// TODO: swap
+		return t
+	default:
+		return nil
+	}
 }
 
-// Fill diagonal square by random digits
-func (t *TerminalJson) genMaterial() *TerminalJson {
-	tmp := increasingDigits(1, t.E)
-	square := int(math.Sqrt(float64(t.E)))
-	for i := 0; i < t.E; i += square + 1 {
-		digits := disorderDigits(tmp)
-		for j := 0; j < t.E; j++ {
-			row := j/square + (i/square)*square
-			col := j%square + (i/square)*square
-			t.Cell(row, col).D = digits[j]
+func (t *TerminalJson) genMaterial(blockMode int) *TerminalJson {
+	mode := BlockMode(blockMode)
+	switch mode {
+	case SQUARE:
+		// Fill diagonal square by random digits
+		tmp := increasingDigits(1, t.E)
+		square := int(math.Sqrt(float64(t.E)))
+		for i := 0; i < t.E; i += square + 1 {
+			digits := disorderDigits(tmp)
+			for j := 0; j < t.E; j++ {
+				row := j/square + (i/square)*square
+				col := j%square + (i/square)*square
+				t.Cell(row, col).D = digits[j]
+			}
 		}
+		return t
+	case IRREGULAR:
+		// TODO: filling
+		return t
+	default:
+		return nil
 	}
-	return t
 }
 
 func (t *TerminalJson) genPuzzle(minSubGiven int, minTotalGiven int) *TerminalJson {
