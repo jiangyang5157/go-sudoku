@@ -2,10 +2,13 @@ package sudoku
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
+	"time"
 )
 
 func Test_genBlock(t *testing.T) {
+	rand.Seed(time.Now().Unix())
 	fmt.Printf("Test_genBlock_SQUARE:\n%v\n", NewTerminalJson(9).genBlock(int(SQUARE)))
 	fmt.Printf("Test_genBlock_IRREGULAR:\n%v\n", NewTerminalJson(9).genBlock(int(IRREGULAR)))
 }

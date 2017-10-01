@@ -1,6 +1,7 @@
 package sudoku
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -46,24 +47,91 @@ func GenTerminalJson(blockMode int, edge int, minSubGiven int, minTotalGiven int
 }
 
 func (t *TerminalJson) genBlock(blockMode int) *TerminalJson {
-	// Gen diagonal square
-	square := int(math.Sqrt(float64(t.E)))
-	for i := 0; i < len(t.C); i++ {
-		c := &t.C[i]
-		row, col := t.Row(i), t.Col(i)
-		c.B = (row/square)*square + col/square
-	}
-
 	mode := BlockMode(blockMode)
 	switch mode {
 	case SQUARE:
+		// Gen diagonal square
+		square := int(math.Sqrt(float64(t.E)))
+		for i := 0; i < len(t.C); i++ {
+			c := &t.C[i]
+			row, col := t.Row(i), t.Col(i)
+			c.B = (row/square)*square + col/square
+		}
 		return t
 	case IRREGULAR:
-		// TODO: swap
+		// Gen diagonal square
+		square := int(math.Sqrt(float64(t.E)))
+		blockIndexes := make(map[int][]int)
+		for i := 0; i < len(t.C); i++ {
+			c := &t.C[i]
+			row, col := t.Row(i), t.Col(i)
+			c.B = (row/square)*square + col/square
+			blockIndexes[c.B] = append(blockIndexes[c.B], i)
+		}
+		if t.E == 1 {
+			return t // 1*1 sudoku doesn't require swap
+		}
+		// Swap
+
+		aBlock, aIndex, bBlock, bIndex := -1, -1, -1, -1
+		for aBlock == -1 || bBlock == -1 {
+			fmt.Println("@@@@")
+			aBlock = rand.Intn(t.E)
+			blockIndexes[aBlock] = disorderDigits(blockIndexes[aBlock])
+			aIndex = blockIndexes[aBlock][0]
+			aBlock = 0  // TODO: remove
+			aIndex = 20 // TODO: remove
+
+			aNbs := disorderDigits(t.Neighbours(aIndex))
+			for _, aNb := range aNbs {
+				if t.C[aNb].B == aBlock {
+					continue
+				}
+				bBlock = t.C[aNb].B
+				blockIndexes[bBlock] = disorderDigits(blockIndexes[bBlock])
+				for _, index := range blockIndexes[bBlock] {
+					bNbs := t.Neighbours(index)
+					for _, bNb := range bNbs {
+						// fmt.Println("bNb=", bNb)
+					}
+				}
+				bIndex = blockIndexes[bBlock][0]
+				fmt.Println("aBlock=", aBlock, "aIndex", aIndex)
+				fmt.Println("bBlock=", bBlock, "bIndex", bIndex)
+				fmt.Println()
+			}
+		}
+
+		// attempts := 2
+		// for n := 0; n < attempts; n++ {
+		// 	aBlock, aBlockIndex, aCell, bBlock, bBlockIndex, bCell := -1, -1, -1, -1, -1, -1
+		// 	for aCell == -1 || bCell == -1 {
+		// 		aBlock = rand.Intn(t.E)
+		// 		aBlockIndex = rand.Intn(t.E)
+		// 		aCell = blockIndexes[aBlock][aBlockIndex]
+		// 		aNbs := t.Neighbours(aCell)
+		// 		for _, aNb := range aNbs {
+		// 			if t.C[aNb].B != aBlock {
+		// 				bBlock = t.C[aNb].B
+		// 				bBlockIndex = rand.Intn(t.E)
+		// 				bCell = blockIndexes[bBlock][bBlockIndex]
+		// 				fmt.Println("aBlock=", aBlock, "aCell", aCell)
+		// 				fmt.Println("bBlock=", bBlock, "bCell", bCell)
+		// 				fmt.Println()
+		// 				break
+		// 			}
+		// 		}
+		// 	}
+		// 	// TODO:
+		// }
 		return t
 	default:
 		return nil
 	}
+}
+
+func (t *TerminalJson) validateBlock(index int) bool {
+	return false
 }
 
 func (t *TerminalJson) genMaterial(blockMode int) *TerminalJson {
