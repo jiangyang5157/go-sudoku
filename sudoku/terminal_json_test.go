@@ -1,7 +1,6 @@
 package sudoku
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 )
@@ -35,5 +34,16 @@ func Test_Clone(t *testing.T) {
 }
 
 func Test_newTerminal(t *testing.T) {
-	fmt.Printf("Test_newTerminal:\n%v\n", NewTerminalJson(9))
+	emptyT := NewTerminalJson(9)
+	if emptyT.E != 9 {
+		t.Error("NewTerminalJson failed")
+	}
+	for i := 0; i < 9; i++ {
+		for j := 0; j < 9; j++ {
+			cell := emptyT.Cell(i, j)
+			if cell.D != 0 || cell.B != 0 {
+				t.Error("NewTerminalJson failed")
+			}
+		}
+	}
 }

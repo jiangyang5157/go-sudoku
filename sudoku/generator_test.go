@@ -16,13 +16,22 @@ func Test_GenGenTerminalJson(t *testing.T) {
 	fmt.Printf("Test_GenTerminalJson:\n%v\n", GenTerminalJson(9, 2, 22))
 }
 
-func Test_GenString(t *testing.T) {
-	fmt.Printf("Test_GenString:\n%v\n", GenString(9, 2, 22))
-}
-
 func Test_increasingDigits_digitsDisorder(t *testing.T) {
 	var digits []int = increasingDigits(1, 10)
-	fmt.Printf("Test_increasingDigits:\n%d\n", digits)
+	for i := 0; i < 10; i++ {
+		if digits[i] != i+1 {
+			t.Error("increasingDigits is wrong")
+		}
+	}
 	disorderDigits(digits)
-	fmt.Printf("Test_digitsDisorder:\n%d\n", digits)
+	ok := false
+	for i := 0; i < 10; i++ {
+		if digits[i] != i+1 {
+			ok = true
+			break
+		}
+	}
+	if !ok {
+		t.Error("disorderDigits is wrong")
+	}
 }
