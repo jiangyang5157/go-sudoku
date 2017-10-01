@@ -246,3 +246,12 @@ func disorderDigits(src []int) []int {
 // 	}
 // 	return !trace.IsEmpty()
 // }
+// ....
+// func reachableNum(g graph.Graph, id graph.Id) int {
+// 	visited := 0
+// 	traversal.Dfs(g, id, func(nd graph.Node) bool {
+// 		visited++
+// 		return false
+// 	})
+// 	return visited
+// }
