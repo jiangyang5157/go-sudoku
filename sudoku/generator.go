@@ -83,14 +83,10 @@ func (t *TerminalJson) genBlock(blockMode int) *TerminalJson {
 			}
 		}
 
-		attemptsCount, attemptsMin, attemptsMax := 0, len(t.C)/square, 1000
-		for i := 0; i < attemptsMin; i++ {
-			attemptsCount++
+		attempts := len(t.C) / square
+		for i := 0; i < attempts; i++ {
 			if !swap(t, g) {
 				i--
-			}
-			if attemptsCount >= attemptsMax {
-				break
 			}
 		}
 		return t
@@ -208,7 +204,7 @@ func (t *TerminalJson) genMaterial(blockMode int) *TerminalJson {
 		}
 		return t
 	case IRREGULAR:
-		// TODO: filling
+		// TODO: Filling
 		return t
 	default:
 		return nil
