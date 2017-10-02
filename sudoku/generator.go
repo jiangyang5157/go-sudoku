@@ -68,21 +68,13 @@ func (t *TerminalJson) genBlock(blockMode int) *TerminalJson {
 			c.B = (row/square)*square + col/square
 			blockIndexes[c.B] = append(blockIndexes[c.B], i)
 		}
-		// for k, v := range blockIndexes {
-		// 	fmt.Printf("key[%v] value[%v]\n", k, v)
-		// }
 		if t.E == 1 {
 			return t // 1*1 sudoku doesn't require swap
 		}
 		// Swap
-		n := 2
-		for i := 0; i < n; i++ {
-			aBlock, aIndex, bBlock, bIndex := t.genBlockSwapParams(blockIndexes)
-			if aBlock == -1 || aIndex == -1 || bBlock == -1 || bIndex == -1 {
-				continue
-			}
-			ok := t.blockSwap(blockIndexes, aBlock, aIndex, bBlock, bIndex)
-			fmt.Printf("Swap(%v), a(%v, %v), b(%v, %v)\n", ok, aBlock, aIndex, bBlock, bIndex)
+		attempts := 2
+		for i := 0; i < attempts; i++ {
+			t.swap(blockIndexes)
 		}
 		return t
 	default:
@@ -90,7 +82,8 @@ func (t *TerminalJson) genBlock(blockMode int) *TerminalJson {
 	}
 }
 
-func (t *TerminalJson) genBlockSwapParams(blockIndexes map[int][]int) (int, int, int, int) {
+func (t *TerminalJson) swap(blockIndexes map[int][]int) bool {
+	// Genarate swap params
 	aBlock, aIndex, bBlock, bIndex := -1, -1, -1, -1
 	aBlock = rand.Intn(t.E)
 	blockIndexes[aBlock] = disorderDigits(blockIndexes[aBlock])
@@ -105,10 +98,22 @@ func (t *TerminalJson) genBlockSwapParams(blockIndexes map[int][]int) (int, int,
 			break
 		}
 	}
-	return aBlock, aIndex, bBlock, bIndex
-}
+	fmt.Printf("Swap: a(%v, %v), b(%v, %v)\n", aBlock, aIndex, bBlock, bIndex)
+	if aBlock == -1 || aIndex == -1 || bBlock == -1 || bIndex == -1 {
+		return false
+	}
 
-func (t *TerminalJson) blockSwap(blockIndexes map[int][]int, aBlock, aIndex, bBlock, bIndex int) bool {
+	// swap and validate completeness
+	t.C[aIndex].B, t.C[bIndex].B = bBlock, aBlock
+	blockIndexes[aBlock][0], blockIndexes[bBlock][0] = bIndex, aIndex
+
+	// for index := range blockIndexes[aBlock] {
+	// 	nbs := t.Neighbours(index)
+	// 	ok := false
+	// 	for nb := range nbs {
+	// 		if t.C[nb].B ==
+	// 	}
+	// }
 
 	return true
 }
