@@ -5,6 +5,9 @@ import (
 	"math"
 	"math/rand"
 	"time"
+
+	"github.com/jiangyang5157/go-graph/graph"
+	"github.com/jiangyang5157/go-graph/graph/traversal"
 )
 
 type BlockMode int
@@ -47,34 +50,43 @@ func GenTerminalJson(blockMode int, edge int, minSubGiven int, minTotalGiven int
 }
 
 func (t *TerminalJson) genBlock(blockMode int) *TerminalJson {
+	// Gen diagonal square
+	square := int(math.Sqrt(float64(t.E)))
+	for i := 0; i < len(t.C); i++ {
+		row, col := t.Row(i), t.Col(i)
+		c := &t.C[i]
+		c.B = (row/square)*square + col/square
+	}
+
 	mode := BlockMode(blockMode)
 	switch mode {
 	case SQUARE:
-		// Gen diagonal square
-		square := int(math.Sqrt(float64(t.E)))
-		for i := 0; i < len(t.C); i++ {
-			c := &t.C[i]
-			row, col := t.Row(i), t.Col(i)
-			c.B = (row/square)*square + col/square
-		}
 		return t
 	case IRREGULAR:
-		// Gen diagonal square
-		square := int(math.Sqrt(float64(t.E)))
-		blockIndexes := make(map[int][]int)
-		for i := 0; i < len(t.C); i++ {
-			c := &t.C[i]
-			row, col := t.Row(i), t.Col(i)
-			c.B = (row/square)*square + col/square
-			blockIndexes[c.B] = append(blockIndexes[c.B], i)
-		}
 		if t.E == 1 {
-			return t // 1*1 sudoku doesn't require swap
+			// 1*1 sudoku doesn't require swap
+			return t
 		}
-		// Swap
-		attempts := 2
+
+		g := NewGraph(t)
+		// unlink between blocks
+		for i := 0; i < t.E; i++ {
+			for j := 0; j < t.E; j++ {
+				if i < t.E-1 && (i+1)%square == 0 {
+					top, bottom := Index2Id(t.Index(i, j)), Index2Id(t.Index(i+1, j))
+					unlink(g, top, bottom)
+					unlink(g, bottom, top)
+				}
+				if j < t.E-1 && (j+1)%square == 0 {
+					left, right := Index2Id(t.Index(i, j)), Index2Id(t.Index(i, j+1))
+					unlink(g, left, right)
+					unlink(g, right, left)
+				}
+			}
+		}
+		attempts := 50
 		for i := 0; i < attempts; i++ {
-			t.swap(blockIndexes)
+			swap(t, g)
 		}
 		return t
 	default:
@@ -82,38 +94,106 @@ func (t *TerminalJson) genBlock(blockMode int) *TerminalJson {
 	}
 }
 
-func (t *TerminalJson) swap(blockIndexes map[int][]int) bool {
-	// Genarate swap params
-	aBlock, aIndex, bBlock, bIndex := -1, -1, -1, -1
-	aBlock = rand.Intn(t.E)
-	blockIndexes[aBlock] = disorderDigits(blockIndexes[aBlock])
-	aIndex = blockIndexes[aBlock][0]
-
-	aNbs := disorderDigits(t.Neighbours(aIndex))
+func swap(t *TerminalJson, g graph.Graph) bool {
+	// Gen random aIndex and bIndex
+	aIndex, bIndex := -1, -1
+	aIndex = rand.Intn(len(t.C))
+	aNbs := t.Neighbours(aIndex)
+	aNbs = disorderDigits(aNbs)
 	for _, aNb := range aNbs {
-		bBlock = t.C[aNb].B
-		if bBlock != aBlock {
-			blockIndexes[bBlock] = disorderDigits(blockIndexes[bBlock])
-			bIndex = blockIndexes[bBlock][0]
+		if t.C[aNb].B != t.C[aIndex].B {
+			random := rand.Intn(t.E)
+			traversal.Dfs(g, Index2Id(aNb), func(nd graph.Node) bool {
+				bIndex = Id2Index(nd.Id())
+				random--
+				return random < 0
+			})
 			break
 		}
 	}
-	fmt.Printf("Swap: a(%v, %v), b(%v, %v)\n", aBlock, aIndex, bBlock, bIndex)
-	if aBlock == -1 || aIndex == -1 || bBlock == -1 || bIndex == -1 {
+	if aIndex == -1 || bIndex == -1 {
 		return false
 	}
 
-	// swap and validate completeness
-	t.C[aIndex].B, t.C[bIndex].B = bBlock, aBlock
-	blockIndexes[aBlock][0], blockIndexes[bBlock][0] = bIndex, aIndex
+	// Swap aIndex and bIndex
+	aBlock, bBlock := t.C[aIndex].B, t.C[bIndex].B
+	aIndexId, bIndexId := Index2Id(aIndex), Index2Id(bIndex)
+	bNbs := t.Neighbours(bIndex)
+	fmt.Printf("Swap: a(%v, %v), b(%v, %v)\n", aBlock, aIndex, bBlock, bIndex)
 
-	// for index := range blockIndexes[aBlock] {
-	// 	nbs := t.Neighbours(index)
-	// 	ok := false
-	// 	for nb := range nbs {
-	// 		if t.C[nb].B ==
-	// 	}
-	// }
+	t.C[aIndex].B, t.C[bIndex].B = bBlock, aBlock
+	for _, aNb := range aNbs {
+		aNbId := Index2Id(aNb)
+		if t.C[aNb].B == aBlock {
+			unlink(g, aIndexId, aNbId)
+			unlink(g, aNbId, aIndexId)
+		}
+		if t.C[aNb].B == bBlock {
+			link(g, aIndexId, aNbId)
+			link(g, aNbId, aIndexId)
+		}
+	}
+	for _, bNb := range bNbs {
+		bNbId := Index2Id(bNb)
+		if t.C[bNb].B == bBlock {
+			unlink(g, bIndexId, bNbId)
+			unlink(g, bNbId, bIndexId)
+		}
+		if t.C[bNb].B == aBlock {
+			link(g, bIndexId, bNbId)
+			link(g, bNbId, bIndexId)
+		}
+	}
+
+	// Validate
+	aBlockChildrenNum, bCountChildrenNum := 0, 0
+	traversal.Dfs(g, aIndexId, func(nd graph.Node) bool {
+		fmt.Printf("Swap - aIndexId Dfs: %v\n", nd)
+		bCountChildrenNum++
+		return false
+	})
+	traversal.Dfs(g, bIndexId, func(nd graph.Node) bool {
+		fmt.Printf("Swap - bIndexId Dfs: %v\n", nd)
+		aBlockChildrenNum++
+		return false
+	})
+	fmt.Printf("Validate: aBlockChildrenNum=%v, bCountChildrenNum=%v\n", aBlockChildrenNum, bCountChildrenNum)
+	if aBlockChildrenNum != t.E || bCountChildrenNum != t.E {
+		// Undo swap
+		t.C[aIndex].B, t.C[bIndex].B = aBlock, bBlock
+		for _, aNb := range aNbs {
+			aNbId := Index2Id(aNb)
+			if t.C[aNb].B == aBlock {
+				link(g, aIndexId, aNbId)
+				link(g, aNbId, aIndexId)
+			}
+			if t.C[aNb].B == bBlock {
+				unlink(g, aIndexId, aNbId)
+				unlink(g, aNbId, aIndexId)
+			}
+		}
+		for _, bNb := range bNbs {
+			bNbId := Index2Id(bNb)
+			if t.C[bNb].B == bBlock {
+				link(g, bIndexId, bNbId)
+				link(g, bNbId, bIndexId)
+			}
+			if t.C[bNb].B == aBlock {
+				unlink(g, bIndexId, bNbId)
+				unlink(g, bNbId, bIndexId)
+			}
+		}
+		// TODO: remove following
+		traversal.Dfs(g, aIndexId, func(nd graph.Node) bool {
+			fmt.Printf("Undo swap - aIndexId Dfs: %v\n", nd)
+			return false
+		})
+		traversal.Dfs(g, bIndexId, func(nd graph.Node) bool {
+			fmt.Printf("Undo swap - bIndexId Dfs: %v\n", nd)
+			return false
+		})
+		return false
+	}
 
 	return true
 }
