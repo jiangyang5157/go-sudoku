@@ -15,7 +15,7 @@ func Test_genBlock(t *testing.T) {
 
 func Test_GenGenTerminalJson(t *testing.T) {
 	fmt.Printf("Test_GenTerminalJson_SQUARE:\n%v\n", GenTerminalJson(int(SQUARE), 9, 2, 22))
-	fmt.Printf("Test_GenTerminalJson_IRREGULAR:\n%v\n", GenTerminalJson(int(IRREGULAR), 9, 2, 22))
+	fmt.Printf("Test_GenTerminalJson_IRREGULAR:\n%v\n", GenTerminalJson(int(IRREGULAR), 9, 2, 81))
 }
 
 func Test_increasingDigits_digitsDisorder(t *testing.T) {
