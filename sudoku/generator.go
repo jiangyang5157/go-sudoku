@@ -1,7 +1,6 @@
 package sudoku
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -32,7 +31,6 @@ func GenTerminalJson(blockMode int, edge int, minSubGiven int, minTotalGiven int
 
 	t := NewTerminalJson(edge)
 	t = t.genBlock(blockMode)
-
 	var ret *TerminalJson
 	ok := false
 	for !ok {
@@ -84,9 +82,16 @@ func (t *TerminalJson) genBlock(blockMode int) *TerminalJson {
 				}
 			}
 		}
-		attempts := 50
-		for i := 0; i < attempts; i++ {
-			swap(t, g)
+
+		attemptsCount, attemptsMin, attemptsMax := 0, len(t.C)/square, 1000
+		for i := 0; i < attemptsMin; i++ {
+			attemptsCount++
+			if !swap(t, g) {
+				i--
+			}
+			if attemptsCount >= attemptsMax {
+				break
+			}
 		}
 		return t
 	default:
@@ -119,7 +124,6 @@ func swap(t *TerminalJson, g graph.Graph) bool {
 	aBlock, bBlock := t.C[aIndex].B, t.C[bIndex].B
 	aIndexId, bIndexId := Index2Id(aIndex), Index2Id(bIndex)
 	bNbs := t.Neighbours(bIndex)
-	fmt.Printf("Swap: a(%v, %v), b(%v, %v)\n", aBlock, aIndex, bBlock, bIndex)
 
 	t.C[aIndex].B, t.C[bIndex].B = bBlock, aBlock
 	for _, aNb := range aNbs {
@@ -146,19 +150,17 @@ func swap(t *TerminalJson, g graph.Graph) bool {
 	}
 
 	// Validate
-	aBlockChildrenNum, bCountChildrenNum := 0, 0
+	aValidation, bValidation := 0, 0
 	traversal.Dfs(g, aIndexId, func(nd graph.Node) bool {
-		fmt.Printf("Swap - aIndexId Dfs: %v\n", nd)
-		bCountChildrenNum++
+		bValidation++
 		return false
 	})
 	traversal.Dfs(g, bIndexId, func(nd graph.Node) bool {
-		fmt.Printf("Swap - bIndexId Dfs: %v\n", nd)
-		aBlockChildrenNum++
+		aValidation++
 		return false
 	})
-	fmt.Printf("Validate: aBlockChildrenNum=%v, bCountChildrenNum=%v\n", aBlockChildrenNum, bCountChildrenNum)
-	if aBlockChildrenNum != t.E || bCountChildrenNum != t.E {
+
+	if aValidation != t.E || bValidation != t.E {
 		// Undo swap
 		t.C[aIndex].B, t.C[bIndex].B = aBlock, bBlock
 		for _, aNb := range aNbs {
@@ -183,15 +185,6 @@ func swap(t *TerminalJson, g graph.Graph) bool {
 				unlink(g, bNbId, bIndexId)
 			}
 		}
-		// TODO: remove following
-		traversal.Dfs(g, aIndexId, func(nd graph.Node) bool {
-			fmt.Printf("Undo swap - aIndexId Dfs: %v\n", nd)
-			return false
-		})
-		traversal.Dfs(g, bIndexId, func(nd graph.Node) bool {
-			fmt.Printf("Undo swap - bIndexId Dfs: %v\n", nd)
-			return false
-		})
 		return false
 	}
 

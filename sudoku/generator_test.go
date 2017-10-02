@@ -13,12 +13,10 @@ func Test_genBlock(t *testing.T) {
 	fmt.Printf("Test_genBlock_IRREGULAR:\n%v\n", NewTerminalJson(9).genBlock(int(IRREGULAR)))
 }
 
-// TODO: test
-// func Test_GenGenTerminalJson(t *testing.T) {
-// 	rand.Seed(time.Now().Unix())
-// 	fmt.Printf("Test_GenTerminalJson_SQUARE:\n%v\n", GenTerminalJson(int(SQUARE), 9, 2, 22))
-// 	fmt.Printf("Test_GenTerminalJson_IRREGULAR:\n%v\n", GenTerminalJson(int(IRREGULAR), 9, 2, 22))
-// }
+func Test_GenGenTerminalJson(t *testing.T) {
+	fmt.Printf("Test_GenTerminalJson_SQUARE:\n%v\n", GenTerminalJson(int(SQUARE), 9, 2, 22))
+	fmt.Printf("Test_GenTerminalJson_IRREGULAR:\n%v\n", GenTerminalJson(int(IRREGULAR), 9, 2, 22))
+}
 
 func Test_increasingDigits_digitsDisorder(t *testing.T) {
 	var digits []int = increasingDigits(1, 10)
