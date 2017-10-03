@@ -2,6 +2,7 @@
 - [Knuth's Algorithm X](https://en.wikipedia.org/wiki/Knuth%27s_Algorithm_X) based sudoku puzzle solver and generator.
 - Terminal data: `Json`
 - Edges: `1 * 1`, `2 * 2`, `3 * 3`, ..., `n * n`
+- Puzzle generator: SQUARE, IRREGULAR
 
 #### Mobile
 The [Go mobile](https://github.com/golang/go/wiki/Mobile) subrepository adds support for mobile platforms (Android and iOS).
