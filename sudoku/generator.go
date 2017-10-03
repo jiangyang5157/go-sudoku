@@ -1,7 +1,6 @@
 package sudoku
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -30,21 +29,12 @@ func GenByte(blockMode int, edge int, minSubGiven int, minTotalGiven int) []byte
 func GenTerminalJson(blockMode int, edge int, minSubGiven int, minTotalGiven int) *TerminalJson {
 	rand.Seed(time.Now().Unix())
 	t := NewTerminalJson(edge)
-	t = t.genBlock(blockMode)
-	test_val_attempts := 0 // TODO: remove
 	for {
-		if test_val_attempts > 1000 {
-			fmt.Printf("#### test_val_attempts > 1000\n") // TODO: remove
-			return nil
-		}
-		test_val_attempts++
 		ret := t.Clone()
-		fmt.Printf("#### test_val_attempts Clone(): %v\n", test_val_attempts) // TODO: remove
+		ret = ret.genBlock(blockMode)
 		ret = ret.genMaterial()
-		fmt.Printf("#### test_val_attempts genMaterial(): %v\n", test_val_attempts) // TODO: remove
 		ret = SolveTerminalJson(ret)
 		if ret != nil {
-			fmt.Printf("#### test_val_attempts SolveTerminalJson (%v): %v\n", blockMode, test_val_attempts) // TODO: remove
 			return ret.genPuzzle(minSubGiven, minTotalGiven)
 		}
 	}
@@ -100,6 +90,7 @@ func (t *TerminalJson) genBlock(blockMode int) *TerminalJson {
 }
 
 func swap(t *TerminalJson, g graph.Graph) bool {
+
 	// Gen random aIndex and bIndex
 	aIndex, bIndex := -1, -1
 	aIndex = rand.Intn(len(t.C))
@@ -161,6 +152,7 @@ func swap(t *TerminalJson, g graph.Graph) bool {
 	})
 
 	if aValidation != t.E || bValidation != t.E {
+
 		// Undo swap
 		t.C[aIndex].B, t.C[bIndex].B = aBlock, bBlock
 		for _, aNb := range aNbs {
