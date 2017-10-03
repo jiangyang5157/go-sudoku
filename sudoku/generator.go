@@ -1,6 +1,7 @@
 package sudoku
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -28,23 +29,26 @@ func GenByte(blockMode int, edge int, minSubGiven int, minTotalGiven int) []byte
 
 func GenTerminalJson(blockMode int, edge int, minSubGiven int, minTotalGiven int) *TerminalJson {
 	rand.Seed(time.Now().Unix())
-
 	t := NewTerminalJson(edge)
 	t = t.genBlock(blockMode)
-	var ret *TerminalJson
-	ok := false
-	for !ok {
-		ret = t.Clone()
-		ret = ret.genMaterial(blockMode)
-		// valid material must have at least one solution
+	test_val_attempts := 0 // TODO: remove
+	for {
+		if test_val_attempts > 1000 {
+			fmt.Printf("#### test_val_attempts > 1000\n") // TODO: remove
+			return nil
+		}
+		test_val_attempts++
+		ret := t.Clone()
+		fmt.Printf("#### test_val_attempts Clone(): %v\n", test_val_attempts) // TODO: remove
+		ret = ret.genMaterial()
+		fmt.Printf("#### test_val_attempts genMaterial(): %v\n", test_val_attempts) // TODO: remove
 		ret = SolveTerminalJson(ret)
 		if ret != nil {
-			ok = true
+			fmt.Printf("#### test_val_attempts SolveTerminalJson (%v): %v\n", blockMode, test_val_attempts) // TODO: remove
+			return ret.genPuzzle(minSubGiven, minTotalGiven)
 		}
 	}
-
-	ret = ret.genPuzzle(minSubGiven, minTotalGiven)
-	return ret
+	return nil
 }
 
 func (t *TerminalJson) genBlock(blockMode int) *TerminalJson {
@@ -187,28 +191,28 @@ func swap(t *TerminalJson, g graph.Graph) bool {
 	return true
 }
 
-func (t *TerminalJson) genMaterial(blockMode int) *TerminalJson {
-	mode := BlockMode(blockMode)
-	switch mode {
-	case SQUARE:
-		// Fill diagonal square by random digits
-		tmp := increasingDigits(1, t.E)
-		square := int(math.Sqrt(float64(t.E)))
-		for i := 0; i < t.E; i += square + 1 {
-			digits := disorderDigits(tmp)
-			for j := 0; j < t.E; j++ {
-				row := j/square + (i/square)*square
-				col := j%square + (i/square)*square
-				t.Cell(row, col).D = digits[j]
+func (t *TerminalJson) genMaterial() *TerminalJson {
+	// Fill diagonal square by random digits
+	blockIndexes := make(map[int]map[int]bool)
+	tmp := increasingDigits(1, t.E)
+	square := int(math.Sqrt(float64(t.E)))
+	for i := 0; i < t.E; i += square + 1 {
+		digits := disorderDigits(tmp)
+		for j := 0; j < t.E; j++ {
+			row := j/square + (i/square)*square
+			col := j%square + (i/square)*square
+			index := t.Index(row, col)
+			if _, ok := blockIndexes[t.C[index].B]; !ok {
+				blockIndexes[t.C[index].B] = make(map[int]bool)
 			}
+			if exist, _ := blockIndexes[t.C[index].B][digits[j]]; exist {
+				continue
+			}
+			t.C[index].D = digits[j]
+			blockIndexes[t.C[index].B][digits[j]] = true
 		}
-		return t
-	case IRREGULAR:
-		// TODO: Filling
-		return t
-	default:
-		return nil
 	}
+	return t
 }
 
 func (t *TerminalJson) genPuzzle(minSubGiven int, minTotalGiven int) *TerminalJson {
