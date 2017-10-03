@@ -25,3 +25,5 @@ _testmain.go
 
 # iOS
 *.DS_Store
+
+build/
